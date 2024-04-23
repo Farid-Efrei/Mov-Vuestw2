@@ -13,7 +13,6 @@
 
 <script>
 import FilmsPopulaires from '../components/FilmsPopulaires.vue'
-import FilmsPopulairesVue from '../components/FilmsPopulaires.vue'
  import NavBar from '../components/header/NavBar.vue'
  import SearchBar from '../components/header/SearchBar.vue'
 
