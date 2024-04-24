@@ -3,7 +3,7 @@
 
     
     <div class="container flex mt-20 mx-auto border-b-2 border-green-200 pb-4 ">
-        <img src="../assets/joker.jpg" alt="Joker" width="100%">
+        <img src="../../assets/joker.jpg" alt="Joker" width="100%">
 
         <div class="ml-24">
             <h1 class="text-5xl font-semibold">Joker</h1>
@@ -50,18 +50,22 @@
             </div>
         </div>
     </div>
+    <CastFilm />
+    <ImagesFilm />
+   
     
-        <CastFilm />
     
     </div>
 </template>
 
 
 <script>
-import CastFilm from '@/components/items/CastFilm.vue'
+import CastFilm from '@/components/films/CastFilm.vue'
+import ImagesFilm from '@/components/films/ImagesFilm.vue'
 export default {
     components: {
         CastFilm,
+        ImagesFilm,
     }
     
 }
