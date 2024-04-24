@@ -4,7 +4,7 @@
         Films Populaires en ce moment !!!
     </h2>
     
-    <div class="grid grid-cols-1 sm:grid-cols-3 md:cols-4 lg:cols-5">
+    <div class="grid grid-cols-1 sm:grid-cols-4 md:cols-4 lg:cols-5">
         <FilmItems/>
     </div>
     
