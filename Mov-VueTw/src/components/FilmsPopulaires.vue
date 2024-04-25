@@ -22,9 +22,15 @@
 
 <script>
 import FilmItems from '@/components/items/FilmItems.vue';
+import api from '../service/api'
 export default{
     components: {
         FilmItems
+    },
+    mounted(){
+        const response = api.get('movie/popular');
+        console.log(response);
+
     }
 }
 
