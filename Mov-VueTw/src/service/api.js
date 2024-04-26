@@ -14,7 +14,7 @@ const requete = axios.create({
     }
 });
 
-export default requete; 
+export default requete;
 
 
 
