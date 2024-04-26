@@ -14,7 +14,7 @@
         <FilmItems/>
         <FilmItems/>
         <FilmItems/>
-       
+
     </div>
     
     </div>
@@ -23,13 +23,19 @@
 <script>
 import FilmItems from '@/components/items/FilmItems.vue';
 import api from '../service/api'
+import requete from '../service/api';
 export default{
     components: {
         FilmItems
     },
-    mounted(){
-        const response = api.get('movie/popular');
-        console.log(response);
+    data(){
+        return{
+            movies: []
+        };
+    },
+    async mounted(){
+        const response = await requete.get('movie/popular');
+        console.log(response.data.results);
 
     }
 }
