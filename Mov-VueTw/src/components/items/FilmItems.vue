@@ -23,24 +23,36 @@
                 video.first_air_date}} </span><br>
         </div>
         <span class="text-lg text-gray-400">
-            <!-- <span v-for="(genre, index) in video.genre_ids" :key="index"> -->
-                <!-- {{ getGenreName(video.id) }} -->
-                {{ video.genre_ids.map(getGenreName).join(',') }}
-            <!-- </span> -->
+             <span v-for="(genre, index) in video.genre_ids" :key="index">
+                {{ (getGenreNames(genre))}}
+                <!-- genre_ids{{ video.genre_ids }} -->
+                <!-- genre:{{ genre_ids}} -->
+                <!-- {{ video.genre_ids(getGenreName) }} -->
+             </span> 
         </span>
     </div>
 </template>
 <script>
 
 export default {
+    
     props: {
         video: {
             required: true,
         },
         genres:{
+            
+            required: true,
+        },
+        genre_ids: {
+            type: Array,
             required: true,
         }
     },
+    setup(){
+        
+    },
+    
     computed: {
         imageUrl() {
             return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
@@ -52,16 +64,29 @@ export default {
 
                 return 'Série'
             }
-        }
+        },
+        
 
     },
     methods: {
         getGenreName(id){
-          const genre = this.genres.find(genre => genre.index === id);
-          return genre ? genre.name : 'Unknown';
-            }
-            
+        
+        const genre = this.genre_ids.find(genre => genre.id === id);
+        return genre ? genre.name : 'Inconnus';
+            },
+        getGenres(genre_ids){
+            const genres_ids = genres_ids.split(" ").map(id => parseInt(id));
+            return genre_ids.map(id => this.getGenreNames(id).join(', '));
+        },
+        getGenreNames(genreId){
+            const genre = this.genres.find(genre => genre.id === genreId);
+            return genre ? genre.name : 'Nooooo';
         }
+            
+        },
+        mounted() {
+  console.log(this.genres);
+}
     }
 
 
