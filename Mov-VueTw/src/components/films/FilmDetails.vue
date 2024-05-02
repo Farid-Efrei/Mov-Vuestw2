@@ -6,7 +6,7 @@
         <img src="../../assets/joker.jpg" alt="Joker" width="100%">
 
         <div class="ml-24">
-            <h1 class="text-5xl font-semibold">Joker</h1>
+            <h1 class="text-5xl font-semibold"> {{video.title ||video.name}}</h1>
             <span class="text-green-200 text-lg flex mt-4">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 mr-3 text-yellow-400 ">
                 <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
@@ -52,7 +52,7 @@
     </div>
     <CastFilm />
     <ImagesFilm />
-   
+
     
     
     </div>
@@ -60,15 +60,81 @@
 
 
 <script>
-import CastFilm from '@/components/films/CastFilm.vue'
-import ImagesFilm from '@/components/films/ImagesFilm.vue'
+import CastFilm from '@/components/films/CastFilm.vue';
+import ImagesFilm from '@/components/films/ImagesFilm.vue';
+import requete from '../../service/api';
 export default {
     components: {
         CastFilm,
         ImagesFilm,
-    }
+    },
+    data(){
+        return{
+            video:[],
+            magicRoute: ''
+            
+        }
+    },
+    mounted(){
+        // this.fetchFilm(this.$route.params.id)
+        this.fetchSerieOrFilm(this.$route.params.id)
+        // console.log('chemin : ' + this.$route.params.id);
+        // console.log('le media type est : ' + this.$route.params.magicRoute, this.$route.params.id);
+        
+       /*  if (this.video.media_type == 'movie') {
+            this.fetchSerie(this.$route.params.id)
+        } else  {
+
+            this.fetchFilm(this.$route.params.id)
+        } */
+    },
+    methods:{
+
+        async fetchFilm(videoId){
+                const response = await requete(
+                "/movie/" + videoId
+            )
+            this.video = response.data
+            },
+
+        async fetchSerie(videoId){
+            const response = await requete(
+                "/tv/" + videoId
+            )
+            this.video = response.data
+        },
+        async fetchSerieOrFilm(videoId){
+            try{
+                const magicRoute = this.$route.params.magicRoute;
+                if (this.$route.params.magicRoute === 'films') {
+                    const response = await requete(
+                `/movie/${videoId}`
+                )
+                this.video = response.data
+                } else {
+                    const response = await requete (
+                        '/tv/' + videoId
+                    )
+                    this.video = response.data
+                }
+                
+               
+            }catch (error){
+                console.error("Une erreur s'est produite lros de la récupération de la video", error)
+                const magicRoute = this.$route.params.magicRoute;
+
+                console.log(`/${magicRoute}/${videoId}`);
+            }
+
+        }
+        }}
+        //async fetchSerie(videoId){
+            
+        
     
-}
+    
+    
+
 </script>
 <style lang="">
     

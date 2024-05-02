@@ -24,8 +24,20 @@ const router = createRouter({
       name: 'films',
       component: LesFilms
     },
+    //{
+    //   path:'/films/:id',
+    //   name: 'filmDetails',
+    //   component: FilmDetails,
+    //   meta : {magicRoute: '/films/id'}
+    // },
+    // {
+    //   path:'/series/:id',
+    //   name: 'filmDetails',
+    //   component: FilmDetails,
+    //   meta : {magicRoute: '/series/'}
+    // },
     {
-      path:'/films/:id',
+      path:'/:magicRoute/:id',
       name: 'filmDetails',
       component: FilmDetails
     }
