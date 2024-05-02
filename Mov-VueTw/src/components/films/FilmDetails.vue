@@ -7,11 +7,18 @@
 
         <div class="ml-24">
             <h1 class="text-5xl font-semibold"> {{video.title ||video.name}}</h1>
-            <span class="text-green-200 text-lg flex mt-4">
+            <span class="text-green-200 text-xl flex mt-4">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-7 mr-3 text-yellow-400 ">
                 <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
                 </svg>
-            90% | 2019-10-02   Crime, Thriller, Drama  2h10
+            {{video.vote_average * 10}}%  |  {{video.release_date}}  |  Durée approximative : {{video.runtime}} min | 
+             
+            <p v-for="(genre,index) in video.genres" :key="index"> 
+                {{ (" | ")  + genre.name }}
+                <span v-if="index !== video.genres.length -1"> |  
+
+                </span>
+            </p>
             </span>
             <p class="mt-7">
                 En 1981, Arthur Fleck travaille dans une agence de clowns à Gotham City. Méprisé et incompris par ceux qui lui font face, il mène une morne vie en marge de la société et habite dans un immeuble miteux avec sa mère Penny. Un soir, il se fait agresser dans le métro par trois traders de Wayne Enterprises alcoolisés qui le brutalisent, le poussant à les tuer en retour. Son geste inspire à une partie de la population l'idée de s'en prendre eux aussi aux puissants. Dans cette société décadente, Arthur bascule peu à peu dans la folie et finit par devenir le Joker, un dangereux tueur psychopathe victime d'hallucinations et le plus grand criminel de Gotham City.
