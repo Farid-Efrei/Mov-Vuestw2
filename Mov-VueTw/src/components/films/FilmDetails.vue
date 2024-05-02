@@ -3,7 +3,7 @@
 
     
     <div class="container flex mt-20 mx-auto border-b-2 border-green-200 pb-4 ">
-        <img src="../../assets/joker.jpg" alt="Joker" width="100%">
+        <img :src="imageUrl" alt="Joker" width="100%">
 
         <div class="ml-24">
             <h1 class="text-5xl font-semibold"> {{video.title ||video.name}}</h1>
@@ -13,15 +13,19 @@
                 </svg>
             {{video.vote_average * 10}}%  |  {{video.release_date}}  |  Durée approximative : {{video.runtime}} min | 
              
-            <p v-for="(genre,index) in video.genres" :key="index"> 
-                {{ (" | ")  + genre.name }}
+            <p v-for="(genre,index) in video.genres" :key="index" class="flex flex-1"> 
+                {{ (" | ")  + genre.name }} <br>
                 <span v-if="index !== video.genres.length -1"> |  
 
                 </span>
             </p>
             </span>
             <p class="mt-7">
-                En 1981, Arthur Fleck travaille dans une agence de clowns à Gotham City. Méprisé et incompris par ceux qui lui font face, il mène une morne vie en marge de la société et habite dans un immeuble miteux avec sa mère Penny. Un soir, il se fait agresser dans le métro par trois traders de Wayne Enterprises alcoolisés qui le brutalisent, le poussant à les tuer en retour. Son geste inspire à une partie de la population l'idée de s'en prendre eux aussi aux puissants. Dans cette société décadente, Arthur bascule peu à peu dans la folie et finit par devenir le Joker, un dangereux tueur psychopathe victime d'hallucinations et le plus grand criminel de Gotham City.
+                {{ video.overview }}
+                <br><br>
+
+
+                <!-- En 1981, Arthur Fleck travaille dans une agence de clowns à Gotham City. Méprisé et incompris par ceux qui lui font face, il mène une morne vie en marge de la société et habite dans un immeuble miteux avec sa mère Penny. Un soir, il se fait agresser dans le métro par trois traders de Wayne Enterprises alcoolisés qui le brutalisent, le poussant à les tuer en retour. Son geste inspire à une partie de la population l'idée de s'en prendre eux aussi aux puissants. Dans cette société décadente, Arthur bascule peu à peu dans la folie et finit par devenir le Joker, un dangereux tueur psychopathe victime d'hallucinations et le plus grand criminel de Gotham City. -->
             </p>
             <div class="mt-10">
                 
@@ -78,13 +82,15 @@ export default {
     data(){
         return{
             video:[],
-            magicRoute: ''
+            
             
         }
     },
     mounted(){
         // this.fetchFilm(this.$route.params.id)
         this.fetchSerieOrFilm(this.$route.params.id)
+        console.log(this.imageUrl);
+        
         // console.log('chemin : ' + this.$route.params.id);
         // console.log('le media type est : ' + this.$route.params.magicRoute, this.$route.params.id);
         
@@ -97,7 +103,7 @@ export default {
     },
     methods:{
 
-        async fetchFilm(videoId){
+       /*  async fetchFilm(videoId){
                 const response = await requete(
                 "/movie/" + videoId
             )
@@ -109,11 +115,11 @@ export default {
                 "/tv/" + videoId
             )
             this.video = response.data
-        },
+        }, */
         async fetchSerieOrFilm(videoId){
             try{
                 const magicRoute = this.$route.params.magicRoute;
-                if (this.$route.params.magicRoute === 'films') {
+                if (magicRoute === 'films') {
                     const response = await requete(
                 `/movie/${videoId}`
                 )
@@ -133,9 +139,19 @@ export default {
                 console.log(`/${magicRoute}/${videoId}`);
             }
 
+        },
+       
+        },
+        computed : {
+            imageUrl() {
+                return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
+            },
         }
-        }}
-        //async fetchSerie(videoId){
+       
+    
+    
+    }
+       
             
         
     
