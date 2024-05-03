@@ -1,4 +1,4 @@
-<!-- eslint-disable vue/no-side-effects-in-computed-properties -->
+
 <template>
     <div class="relative container m-2 border border-green-200">
         <div class="absolute text-2xl text-green-300 bg-black opacity-55">
@@ -67,8 +67,10 @@ export default {
         },
         magicRoute(){
             if (this.video.media_type === 'movie') {
+                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
                 return this.magicRoute = 'films'
             } else {
+                // eslint-disable-next-line vue/no-side-effects-in-computed-properties
                 return this.magicRoute = 'series'
             }
         }
