@@ -109,7 +109,7 @@
             </div>
         </div>
         <CastFilm :casting="creditsData.cast"/>
-        <ImagesFilm />
+        <ImagesFilm :imagesVideo="imagesData.backdrops" />
     </div>
 </template>
 
@@ -127,6 +127,7 @@ export default {
             video: {},
             last_episode_to_air: '',
             creditsData: {},
+            imagesData:{},
         }
     },
     mounted() {
@@ -174,17 +175,25 @@ export default {
                         `/movie/${videoId}` 
                     );
                     const responseCredits = await requete(`/movie/${videoId}/credits`)
+
+                    const responseImages = await requete(`/movie/${videoId}/images`)
+
                     this.video = response.data;
                     this.creditsData = responseCredits.data;
+                    this.imagesData = responseImages.data;
+                    console.log(this.imagesData);
                 } else {
                     const response = await requete(
                         '/tv/' + videoId || `/tv/${videoId}/credits`
                     );
                     const responseCredits = await requete(`/tv/${videoId}/credits`)
+                    const responseImages = await requete (`/tv/${videoId}/images`)
                     this.video = response.data;
-                    this.creditsData = responseCredits.data
+                    this.creditsData = responseCredits.data;
+                    this.imagesData = responseImages.data;
                 }
-                console.log(this.creditsData);
+                console.log("creditsData vaut : " + this.creditsData.cast);
+                console.log("imagesData vaut : " + this.imagesData.backdrops);
             } catch (error) {
                 console.error("Une erreur s'est produite lros de la récupération de la video", error)
             }
