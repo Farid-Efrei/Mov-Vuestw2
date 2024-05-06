@@ -126,6 +126,7 @@ export default {
         return {
             video: {},
             last_episode_to_air: '',
+            creditsData: {},
         }
     },
     mounted() {
