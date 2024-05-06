@@ -5,7 +5,7 @@
 
             <div class="ml-24  ">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-5xl font-semibold">{{ video.title || video.name }}</h1>
+                    <h1 class="text-5xl font-semibold">{{ this.video.title || video.name }}</h1>
                     <img src="../../assets/filmIcone.webp" alt="icone-film" class="size-20" v-if="magicRoute ===false">
                     <img src="../../assets/tvseries.webp" alt="icone-serie" class="size-20" v-if="magicRoute" >
                 </div>
@@ -60,7 +60,7 @@
 
 
                 </span>
-                <p class="mt-7 text-justify shadow-2xl">
+                <p class="mt-7 text-justify shadow-2xl ">
                     {{ video.overview }}
                     <br /><br />
 
@@ -75,13 +75,13 @@
 
                     <div class="flex gap-10">
                         <div class="flex flex-col">
-                            <span v-if="video && video.created_by">
+                            <span v-if="video && video.created_by && video.created">
                                 Todd Philips | {{ video.created_by[0].name }}</span>
                             <span class="text-green-300">Realisateur</span>
                         </div>
 
                         <div class="flex flex-col">
-                            <span v-if="video && video.created_by"> Scott Silver | {{ video.created_by[1].name }}</span>
+                            <span v-if="video && video.created_by && video.created"> Scott Silver | {{ video.created_by[1].name}}</span>
                             <span class="text-green-300">Producteur</span>
                         </div>
                     </div>
