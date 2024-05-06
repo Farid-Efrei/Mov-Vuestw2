@@ -10,7 +10,7 @@
                     <img src="../../assets/tvseries.webp" alt="icone-serie" class="size-20" v-if="magicRoute" >
                 </div>
 
-                <span class="text-green-200 text-xl flex mt-4 border flex-col pl-2">
+                <span class="text-green-200 text-xl flex mt-4 border flex-col pl-2 pb-2 m-2">
 
                     <div class="flex">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -59,12 +59,12 @@
                     </div>
 
 
-                </span>
-                <p class="mt-7 text-justify shadow-2xl ">
+                </span> <b><u>Sypnosis:</u></b>
+                <p class="mt-2 text-justify shadow-2xl ">
                     {{ video.overview }}
                     <br /><br />
 
-                    <span class="font-semibold text-red-300">
+                    <span class="font-semibold text-red-300 text-lg">
                         "{{ video.tagline }}"
                     </span>
                     <!-- En 1981, Arthur Fleck travaille dans une agence de clowns à Gotham City. Méprisé et incompris par ceux qui lui font face, il mène une morne vie en marge de la société et habite dans un immeuble miteux avec sa mère Penny. Un soir, il se fait agresser dans le métro par trois traders de Wayne Enterprises alcoolisés qui le brutalisent, le poussant à les tuer en retour. Son geste inspire à une partie de la population l'idée de s'en prendre eux aussi aux puissants. Dans cette société décadente, Arthur bascule peu à peu dans la folie et finit par devenir le Joker, un dangereux tueur psychopathe victime d'hallucinations et le plus grand criminel de Gotham City. -->
@@ -108,7 +108,7 @@
                 </div>
             </div>
         </div>
-        <CastFilm />
+        <CastFilm :casting="creditsData.cast"/>
         <ImagesFilm />
     </div>
 </template>
@@ -130,7 +130,10 @@ export default {
     },
     mounted() {
         // this.fetchFilm(this.$route.params.id)
+        
+       
         this.fetchSerieOrFilm(this.$route.params.id);
+        
         //console.log(this.imageUrl);
 
         // console.log('chemin : ' + this.$route.params.id);
@@ -163,17 +166,24 @@ export default {
         async fetchSerieOrFilm(videoId) {
             try {
                 const magicRoute = this.$route.params.magicRoute;
+                
+
                 if (magicRoute === 'films') {
                     const response = await requete(
-                        `/movie/${videoId}`
-                    )
-                    this.video = response.data
+                        `/movie/${videoId}` 
+                    );
+                    const responseCredits = await requete(`/movie/${videoId}/credits`)
+                    this.video = response.data;
+                    this.creditsData = responseCredits.data;
                 } else {
                     const response = await requete(
-                        '/tv/' + videoId
-                    )
-                    this.video = response.data
+                        '/tv/' + videoId || `/tv/${videoId}/credits`
+                    );
+                    const responseCredits = await requete(`/tv/${videoId}/credits`)
+                    this.video = response.data;
+                    this.creditsData = responseCredits.data
                 }
+                console.log(this.creditsData);
             } catch (error) {
                 console.error("Une erreur s'est produite lros de la récupération de la video", error)
             }

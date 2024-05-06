@@ -5,13 +5,13 @@
         </h2>
             
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            <div class="mr-2">
+            <div class="mr-2" v-for="(person,index) in casting" :key="index">
 
                 <img src="../../assets/JP.webp" alt="Joaquim Phoenix"
                 class="hover:opacity-80 transition ease-in-out duration-150">
-                <span class="text-lg">Arthur Fleck / Joker</span>
+                <span class="text-lg"> {{ person.name }} / {{person.character}}</span>
             </div>
-            <div class="mr-2">
+            <!-- <div class="mr-2">
 
                 <img src="../../assets/JP.webp" alt="Joaquim Phoenix"
                 class="hover:opacity-80 transition ease-in-out duration-150">
@@ -23,11 +23,11 @@
                 <img src="../../assets/JP.webp" alt="Joaquim Phoenix" class="hover:opacity-80 transition ease-in-out duration-150">
                 
                 <span class="text-lg">Arthur Fleck / Joker</span>
-            </div>
-            <div class="mr-2">
+            </div> -->
+            <!-- <div class="mr-2"> -->
                 
 
-                <img src="../../assets/JP.webp" alt="Joaquim Phoenix"
+                <!-- <img src="../../assets/JP.webp" alt="Joaquim Phoenix"
                 class="hover:opacity-80 transition ease-in-out duration-150">
                 <span class="text-lg">Arthur Fleck / Joker</span>
             </div>
@@ -37,7 +37,7 @@
                 <img src="../../assets/JP.webp" alt="Joaquim Phoenix"
                 class="hover:opacity-80 transition ease-in-out duration-150">
                 <span class="text-lg">Arthur Fleck / Joker</span>
-            </div>
+            </div> -->
             
         </div>
     
@@ -53,6 +53,14 @@
 
 <script>
 export default {
+    props:{
+        casting: {
+            required: true,
+        }
+    },
+    mounted() {
+        
+    },
     
 }
 </script>
