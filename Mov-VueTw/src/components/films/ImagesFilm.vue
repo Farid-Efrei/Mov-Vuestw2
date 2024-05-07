@@ -37,7 +37,7 @@
                 <img :src="videoImages(image)" alt="images de la vidéo" class="hover:opacity-80 transition ease-in-out duration-150">
                 
                 
-                <span class="text-lg">Arthur Fleck / Joker</span>
+                <span class="text-lg">Images / Promo officielles</span>
             </div>
             
         </div>

@@ -249,13 +249,23 @@ export default {
                     Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDRhNjBhODQyOThmNTY0Mjc4OWYzYzMyNmFhYWM4MSIsInN1YiI6IjY1ZmMyNDg5MDQ3MzNmMDE0YWU2NDVkZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.N2hhb55mlVrjwrMp1hGYCOe0938vWTHKxmZlW4CB1t4'
                 }
             };
-
+            const magicRoute = this.$route.params.magicRoute;
+            if (magicRoute === 'films'){
                 fetch(`https://api.themoviedb.org/3/movie/${videoId}/images`, options)
                 .then (response => response.json() )
                 .then (data => {this.imagesScenes = data;
                 console.log(this.imagesScenes)
                 })
                 .catch(err => console.error(err))
+            } else {
+                fetch(`https://api.themoviedb.org/3/tv/${videoId}/images`, options)
+                .then (response => response.json() )
+                .then (data => {this.imagesScenes = data;
+                console.log(this.imagesScenes)
+                })
+                .catch(err => console.error(err))
+            }
+
             }
         },
     
