@@ -31,7 +31,7 @@
                 class="hover:opacity-80 transition ease-in-out duration-150">
                 <span class="text-lg">Arthur Fleck / Joker</span>
             </div>
-            <div class="mr-2" v-for="image in imagesVideo" :key="image.id">
+            <div class="mr-2 mt-2" v-for="image in imagesVideo" :key="image.id">
                 
 
                 <img :src="videoImages(image)" alt="images de la vidéo" class="hover:opacity-80 transition ease-in-out duration-150">

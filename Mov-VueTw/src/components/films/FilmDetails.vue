@@ -69,20 +69,15 @@
                     </span>
                     <!-- En 1981, Arthur Fleck travaille dans une agence de clowns à Gotham City. Méprisé et incompris par ceux qui lui font face, il mène une morne vie en marge de la société et habite dans un immeuble miteux avec sa mère Penny. Un soir, il se fait agresser dans le métro par trois traders de Wayne Enterprises alcoolisés qui le brutalisent, le poussant à les tuer en retour. Son geste inspire à une partie de la population l'idée de s'en prendre eux aussi aux puissants. Dans cette société décadente, Arthur bascule peu à peu dans la folie et finit par devenir le Joker, un dangereux tueur psychopathe victime d'hallucinations et le plus grand criminel de Gotham City. -->
                 </p>
-                <div class="mt-10">
+                <div class="mt-7">
                     <h3 class="text-xl font-semibold">Realisation / Production Cast</h3>
                     <br />
 
-                    <div class="flex gap-10">
-                        <div class="flex flex-col">
-                            <span v-if="video && video.created_by && video.created">
-                                Todd Philips | {{ video.created_by[0].name }}</span>
-                            <span class="text-green-300">Realisateur</span>
-                        </div>
-
-                        <div class="flex flex-col">
-                            <span v-if="video && video.created_by && video.created"> Scott Silver | {{ video.created_by[1].name}}</span>
-                            <span class="text-green-300">Producteur</span>
+                    <div class="flex justify-around">
+                        <div class="flex flex-col place-items-center" v-for="(crew, index) in creditsData.crew" :key="index">
+                            <span v-if="index < 6" class="mr-5">
+                                {{ crew.name }}</span>
+                            <span class="text-green-300 mr-5" v-if="index < 6" >{{crewJobs[index]}}</span>
                         </div>
                     </div>
                     <br />
@@ -133,7 +128,8 @@ export default {
             imagesData:{},
             imageData: {},
             imagesScenes:{},
-            toktok:''
+            toktok:'',
+            
         }
     },
     mounted() {
@@ -289,7 +285,86 @@ export default {
             }
 
 
-        }
+        },
+        // crewJob(){
+        //     if ( this.creditsData.crew.job) {
+        //         console.log(this.creditsData.crew.job)
+                
+        //         if (this.creditsData.crew.job === 'Director'){
+        //             return 'Réalisation';
+                    
+        //         }else if (this.crew.job === 'Novel') {
+        //             return 'adapté du Roman de';
+                    
+        //         } else if (this.crew.job === 'Screenplay'){
+        //             return 'Scénario';
+        //         } else if (this.crew.job === 'Producer'){
+        //             return 'Producteur'
+        //     } else if (this.crew.job === 'Executive Producer'){
+        //         return 'Producteur exécutif'
+        //     } else if (this.crew.job === 'Writer'){
+        //         return 'Scénariste' 
+        //     } else if (this.crew.job === 'Editor'){
+        //         return 'Editeur'
+        //     } else if (this.crew.job === 'Director of Photography'){
+        //         return 'Directeur visuel'
+        //     } else if (this.crew.job === 'Original Music Composer'){
+        //         return 'Compositeur bande originale'
+        //     } else if (this.crew.job === 'Orginal Film Writer'){
+        //         return 'Réalisateur du film original'
+        //     } else if (this.crew.job === 'Co-Director'){
+        //         return 'Co-réalisation'
+        //     } else if (this.crew.job === 'Associate Editor'){
+        //         return 'Edition'
+        //     } else if (this.crew.job === 'Co-Executive Producer'){
+        //         return 'Producteur executif associé'
+        //     } else if (this.crew.job === 'Other'){
+        //         return 'Autre rôle'
+        //     } else return 'Autre';
+        // } else return 'non spécifié';
+        // },
+
+        crewJobs() {
+  if (!this.creditsData.crew || !Array.isArray(this.creditsData.crew)) {
+   return []
+  }
+
+  return this.creditsData.crew.map(member => {
+    switch (member.job) {
+      case 'Director':
+        return 'Réalisation';
+      case 'Novel':
+        return 'Adapté du Roman de';
+      case 'Screenplay':
+        return 'Scénario';
+      case 'Producer':
+        return 'Producteur';
+      case 'Executive Producer':
+        return 'Producteur exécutif';
+      case 'Writer':
+        return 'Scénariste';
+      case 'Editor':
+        return 'Editeur';
+      case 'Director of Photography':
+        return 'Directeur visuel';
+      case 'Original Music Composer':
+        return 'Compositeur de la bande originale';
+      case 'Orginal Film Writer':
+        return 'Scénariste du film original';
+      case 'Co-Director':
+        return 'Co-réalisation';
+      case 'Associate Editor':
+        return 'Editeur associé';
+      case 'Co-Executive Producer':
+        return 'Producteur exécutif associé';
+      case 'Other':
+        return 'Autre rôle';
+      default:
+        return 'Non spécifié';
+    }
+  });
+}
+
 
     },
 }
