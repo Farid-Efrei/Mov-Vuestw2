@@ -8,9 +8,11 @@ const BASE_URL_IMAGE = 'https://image.tmdb.org/t/p/original/';
 
 const requete = axios.create({
     baseURL:'https://api.themoviedb.org/3',
-    headers: {Authorization: 'Bearer ' + TOKTOK},
+    headers: {Authorization: 'Bearer ' + TOKTOK,
+    accept: 'application/json'},
     params: {
         language: REGION,
+
     }
 });
 

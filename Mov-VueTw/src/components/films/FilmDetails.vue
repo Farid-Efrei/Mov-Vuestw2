@@ -109,7 +109,7 @@
             </div>
         </div>
         <CastFilm :casting="creditsData.cast"/>
-        <ImagesFilm :imagesVideo="imagesData.backdrops" />
+        <ImagesFilm :imagesVideo="imagesScenes.backdrops" />
     </div>
 </template>
 
@@ -117,6 +117,7 @@
 import CastFilm from '@/components/films/CastFilm.vue';
 import ImagesFilm from '@/components/films/ImagesFilm.vue';
 import requete from '../../service/api';
+import TOKTOK from '@/service/api'
 export default {
     components: {
         CastFilm,
@@ -128,15 +129,19 @@ export default {
             last_episode_to_air: '',
             creditsData: {},
             imagesData:{},
+            imageData: {},
+            imagesScenes:{}
         }
     },
     mounted() {
         // this.fetchFilm(this.$route.params.id)
         
        
-        this.fetchSerieOrFilm(this.$route.params.id);
-        
+        this.fetchSerieOrFilmV2(this.$route.params.id);
+        // this.fetchImage(this.$route.params.id);
         //console.log(this.imageUrl);
+
+        this.fetchBackdrops(this.$route.params.id)
 
         // console.log('chemin : ' + this.$route.params.id);
         // console.log('le media type est : ' + this.$route.params.magicRoute, this.$route.params.id);
@@ -169,25 +174,23 @@ export default {
             try {
                 const magicRoute = this.$route.params.magicRoute;
                 
-
                 if (magicRoute === 'films') {
                     const response = await requete(
                         `/movie/${videoId}` 
                     );
-                    const responseCredits = await requete(`/movie/${videoId}/credits`)
-
-                    const responseImages = await requete(`/movie/${videoId}/images`)
+                    const responseCredits = await requete(`/movie/${videoId}/credits`);
+                    const responseImages = await requete(`/movie/${videoId}/images`);
 
                     this.video = response.data;
                     this.creditsData = responseCredits.data;
                     this.imagesData = responseImages.data;
-                    console.log(this.imagesData);
+                    console.log(this.imagesData.posters);
                 } else {
                     const response = await requete(
                         '/tv/' + videoId || `/tv/${videoId}/credits`
                     );
-                    const responseCredits = await requete(`/tv/${videoId}/credits`)
-                    const responseImages = await requete (`/tv/${videoId}/images`)
+                    const responseCredits = await requete(`/tv/${videoId}/credits`);
+                    const responseImages = await requete (`/tv/${videoId}/images`);
                     this.video = response.data;
                     this.creditsData = responseCredits.data;
                     this.imagesData = responseImages.data;
@@ -197,8 +200,65 @@ export default {
             } catch (error) {
                 console.error("Une erreur s'est produite lros de la récupération de la video", error)
             }
+        }, async fetchSerieOrFilmV2(videoId){
+            try{
+                const magicRoute = this.$route.params.magicRoute;
+
+                if(magicRoute === 'films'){
+                    const [response, responseCredits,  responseImages] = await Promise.all([
+                        requete(`/movie/${videoId}`),
+                        requete(`/movie/${videoId}/credits`),
+                        requete(`/movie/${videoId}/images`)
+                    ]);
+
+                    this.video = response.data;
+                    this.creditsData = responseCredits.data;
+                    this.imagesData = responseImages.data;
+                } else {
+                    const [response, responseCredits, responseImages] = await Promise.all([
+                        requete(`/tv/${videoId}`),
+                        requete(`/tv/${videoId}/credits`),
+                        requete(`/tv/${videoId}/images`)
+                    ]);
+
+                    this.video = response.data;
+                    this.creditsData = responseCredits.data;
+                    this.imagesData = responseImages.data;
+                }
+
+                console.log("creditsData vaut : ", this.creditsData.cast);
+                console.log("imagesData vaut : ", this.imagesData.posters);
+
+            } catch (erreur) {
+                console.error("Une erreur s'est produite dans la récupération des infos de la video", erreur);
+            }
         },
-    },
+    //    async fetchImage(videoId){
+
+    //     const response = await requete(`movie/${videoId}/images`, {accept :'application/json'});
+    //     this.imageData = response.data;
+    //     console.log(this.imageData);
+
+
+    //     }
+        fetchBackdrops(videoId){
+            const options = {
+                method: 'GET',
+                headers: {
+                    accept: 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDRhNjBhODQyOThmNTY0Mjc4OWYzYzMyNmFhYWM4MSIsInN1YiI6IjY1ZmMyNDg5MDQ3MzNmMDE0YWU2NDVkZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.N2hhb55mlVrjwrMp1hGYCOe0938vWTHKxmZlW4CB1t4'
+                }
+            };
+
+                fetch(`https://api.themoviedb.org/3/movie/${videoId}/images`, options)
+                .then (response => response.json() )
+                .then (data => {this.imagesScenes = data;
+                console.log(this.imagesScenes)
+                })
+                .catch(err => console.error(err))
+            }
+        },
+    
     computed: {
         imageUrl() {
             return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
