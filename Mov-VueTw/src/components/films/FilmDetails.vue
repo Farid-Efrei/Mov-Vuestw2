@@ -82,7 +82,8 @@
                     </div>
                     <br />
                     <div class="mt-10 flex items-center">
-                        <a href="#" class="bg-red-500 px-6 py-6 rounded-lg text-xl font-semibold mr-10 inline-flex">
+                        <a :href="youtubeVideo" class="bg-red-500 px-6 py-6 rounded-lg text-xl font-semibold mr-10 inline-flex"
+                        target="_blank">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-6 h-6 mr-5 mt-1">
                                 <path fill-rule="evenodd"
@@ -125,7 +126,7 @@ export default {
             video: {},
             last_episode_to_air: '',
             creditsData: {},
-            imagesData:{},
+            videosData:{},
             imageData: {},
             imagesScenes:{},
             toktok:'',
@@ -204,29 +205,29 @@ export default {
                 const magicRoute = this.$route.params.magicRoute;
 
                 if(magicRoute === 'films'){
-                    const [response, responseCredits,  responseImages] = await Promise.all([
+                    const [response, responseCredits,  responseVideos] = await Promise.all([
                         requete(`/movie/${videoId}`),
                         requete(`/movie/${videoId}/credits`),
-                        requete(`/movie/${videoId}/images`)
+                        requete(`/movie/${videoId}/videos`)
                     ]);
 
                     this.video = response.data;
                     this.creditsData = responseCredits.data;
-                    this.imagesData = responseImages.data;
+                    this.videosData = responseVideos.data;
                 } else {
-                    const [response, responseCredits, responseImages] = await Promise.all([
+                    const [response, responseCredits, responseVideos] = await Promise.all([
                         requete(`/tv/${videoId}`),
                         requete(`/tv/${videoId}/credits`),
-                        requete(`/tv/${videoId}/images`)
+                        requete(`/tv/${videoId}/videos`)
                     ]);
 
                     this.video = response.data;
                     this.creditsData = responseCredits.data;
-                    this.imagesData = responseImages.data;
+                    this.videosData = responseVideos.data;
                 }
 
                 console.log("creditsData vaut : ", this.creditsData.cast);
-                console.log("imagesData vaut : ", this.imagesData.posters);
+                console.log("videosData vaut : ", this.videosData.results);
 
             } catch (erreur) {
                 console.error("Une erreur s'est produite dans la récupération des infos de la video", erreur);
@@ -363,7 +364,20 @@ export default {
         return 'Non spécifié';
     }
   });
-}
+},
+    youtubeVideo(){
+        
+  console.log('videosData:', this.videosData);
+  if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
+    console.log('key:', this.videosData.results[0].key);
+    return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
+  } else {
+    console.log('No key found');
+    return 'no found';
+  }
+
+    }
+
 
 
     },
