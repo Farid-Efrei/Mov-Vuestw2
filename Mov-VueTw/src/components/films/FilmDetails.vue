@@ -117,7 +117,9 @@
 import CastFilm from '@/components/films/CastFilm.vue';
 import ImagesFilm from '@/components/films/ImagesFilm.vue';
 import requete from '../../service/api';
-import TOKTOK from '@/service/api'
+// eslint-disable-next-line no-undef
+import Toktok from '../../service/tok'
+//const toktok = process.env.TMDB_API_TOKTOK;
 export default {
     components: {
         CastFilm,
@@ -130,7 +132,8 @@ export default {
             creditsData: {},
             imagesData:{},
             imageData: {},
-            imagesScenes:{}
+            imagesScenes:{},
+            toktok:''
         }
     },
     mounted() {
@@ -242,11 +245,14 @@ export default {
 
     //     }
         fetchBackdrops(videoId){
+          
+            //TODO: Provisoirement le token est stoké dans les services en attendant le côté serveur pour le stocker et faire des appels !
+            
             const options = {
                 method: 'GET',
                 headers: {
                     accept: 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkZDRhNjBhODQyOThmNTY0Mjc4OWYzYzMyNmFhYWM4MSIsInN1YiI6IjY1ZmMyNDg5MDQ3MzNmMDE0YWU2NDVkZSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.N2hhb55mlVrjwrMp1hGYCOe0938vWTHKxmZlW4CB1t4'
+                    Authorization: 'Bearer ' + Toktok
                 }
             };
             const magicRoute = this.$route.params.magicRoute;
