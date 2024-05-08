@@ -12,18 +12,18 @@
                 </svg>
             </div>
 
-            <div v-if="searchResult" class="absolute mt-16 ml-3 bg-green-800 rounded w-72">
+            <div v-if="searchResult.length!=0" class="absolute mt-16 ml-3 bg-green-800 rounded w-9/12">
                 <ul class="mt-3">
                     <li 
                     v-for="(multi, index) in searchResult" :key="index"
                     class="flex items-center border-b-2 border-yellow-300 p-1"
                     >
                         <img 
-                            src="" 
+                            :src="videoImages(multi)"
                             alt=""
                             class="w-28 p-1">
                             <span class="font-serif text-lg text-center">
-                                {{multi.title}}
+                                {{multi.title || multi.original_name }}
                             </span>
                     </li>
                    
@@ -60,14 +60,26 @@ export default{
         async fetchSearch(term){
             try{
 
-                const response = await requete("/search/movie?query=" + term);
+                const response = await requete("/search/multi?query=" + term);
                 this.searchResult = response.data.results;
                 console.log(this.searchResult);
             }catch(error){
                 console.log(error);
             }
-        }
-    }
+        },
+        
+        videoImages(multi){
+            if(multi.poster_path ){
+                console.log(multi.poster_path);
+                return "https://image.tmdb.org/t/p/original/" + multi.poster_path
+            } else {
+                console.log(multi.poster_path);
+                return "https://static.vecteezy.com/system/resources/previews/005/337/799/original/icon-image-not-found-free-vector.jpg"
+            }
+            
+        },
+    },
+        
 }
 
 </script>
