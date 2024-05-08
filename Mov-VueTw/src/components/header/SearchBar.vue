@@ -2,7 +2,9 @@
     <div class="mt-3 size-fit  flex relative" >
         <input 
             type="text" 
-            placeholder="Rechercher un Film, un acteur,une série..." class="rounded-full bg-green-800 focus:shadow w-96 pl-7  "
+            placeholder="Rechercher un Film, un acteur,une série..."
+            class="rounded-full bg-green-800 focus:shadow w-96 pl-7"
+            @input="debouncingSearch"
             >
             <div class="absolute top-5 ">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" class="w-7 h-7 text-yellow-200 ">
@@ -10,53 +12,21 @@
                 </svg>
             </div>
 
-            <div v-if="false" class="absolute mt-16 ml-3 bg-green-800 rounded w-8/12">
-                <ul class="mt-1">
-                    <li class="flex items-center border-b-2 border-yellow-300 pb-1">
+            <div v-if="searchResult" class="absolute mt-16 ml-3 bg-green-800 rounded w-72">
+                <ul class="mt-3">
+                    <li 
+                    v-for="(multi, index) in searchResult" :key="index"
+                    class="flex items-center border-b-2 border-yellow-300 p-1"
+                    >
                         <img 
-                            src="../../assets/wakaokami_wa_shougakusei.webp" 
-                            alt="résultat de la recherche"
+                            src="" 
+                            alt=""
                             class="w-28 p-1">
                             <span class="font-serif text-lg text-center">
-                                Orko & Les Fantômes de l'Auberge
+                                {{multi.title}}
                             </span>
                     </li>
-                    <li class="flex items-center border-b-2 border-yellow-300 pb-1">
-                        <img 
-                            src="../../assets/wakaokami_wa_shougakusei.webp" 
-                            alt="résultat de la recherche"
-                            class="w-28 p-1">
-                            <span class="font-serif text-lg text-center">
-                                Orko & Les Fantômes de l'Auberge
-                            </span>
-                    </li>
-                    <li class="flex items-center border-b-2 border-yellow-300 pb-1">
-                        <img 
-                            src="../../assets/wakaokami_wa_shougakusei.webp" 
-                            alt="résultat de la recherche"
-                            class="w-28 p-1">
-                            <span class="font-serif text-lg text-center">
-                                Orko & Les Fantômes de l'Auberge
-                            </span>
-                    </li>
-                    <li class="flex items-center border-b-2 border-yellow-300 pb-1">
-                        <img 
-                            src="../../assets/wakaokami_wa_shougakusei.webp" 
-                            alt="résultat de la recherche"
-                            class="w-28 p-1">
-                            <span class="font-serif text-lg text-center">
-                                Orko & Les Fantômes de l'Auberge
-                            </span>
-                    </li>
-                    <li class="flex items-center border-b-2 border-yellow-300 pb-1">
-                        <img 
-                            src="../../assets/wakaokami_wa_shougakusei.webp" 
-                            alt="résultat de la recherche"
-                            class="w-28 p-1">
-                            <span class="font-serif text-lg text-center">
-                                Orko & Les Fantômes de l'Auberge
-                            </span>
-                    </li>
+                   
                 </ul>
             </div>
 
@@ -65,7 +35,40 @@
     </div>
 </template>
 
-<script setup>
+<script>
+import requete from '../../service/api';
+
+export default{
+
+    data(){
+        return{
+
+            searchResult : [],
+        }
+    },
+    
+    methods: {
+        // pour optimiser les perf en ne déclenchant la rech que lorsque l'user a terminé de saisir (réduit dc le nb de req ou traitements inutiles), on utilise le débouncing search.(en mettant un tps avant de rech pr éviter les rech à cq saisie).
+        debouncingSearch(event){
+            clearTimeout(this.debounce)
+            this.debounce = setTimeout(() => {
+                this.fetchSearch(event.target.value);
+
+            }, 600)
+        },
+
+        async fetchSearch(term){
+            try{
+
+                const response = await requete("/search/movie?query=" + term);
+                this.searchResult = response.data.results;
+                console.log(this.searchResult);
+            }catch(error){
+                console.log(error);
+            }
+        }
+    }
+}
 
 </script>
 
