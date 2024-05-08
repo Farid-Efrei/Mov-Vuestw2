@@ -10,7 +10,7 @@
     </div>
 </template>
 <script >
-import NavBar from './components/header/NavBar.vue'
+import NavBar from './components/header/navBar.vue'
 import SearchBar from './components/header/SearchBar.vue';
 export default {
     components:{
