@@ -55,7 +55,7 @@
 export default {
     props:{
         casting: {
-            type: Array,
+            
             required: true,
         }
     },

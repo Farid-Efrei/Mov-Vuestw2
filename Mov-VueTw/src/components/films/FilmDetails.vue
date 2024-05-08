@@ -1,7 +1,7 @@
 <template>
     <div class="">
         <div class="container flex mt-20 mx-auto border-b-2 border-green-200 pb-4">
-            <img :src="imageUrl" alt="Joker" class="w-[100%] max-w-[100]" />
+            <img :src="imageUrl" :alt="video.title || video.name" class="w-[100%] max-w-[100]" />
 
             <div class="ml-24  ">
                 <div class="flex justify-between items-center">
@@ -139,7 +139,7 @@ export default {
        
         this.fetchSerieOrFilmV2(this.$route.params.id);
         // this.fetchImage(this.$route.params.id);
-        //console.log(this.imageUrl);
+        //console.log("imageUrl : " + this.imageUrl);
 
         this.fetchBackdrops(this.$route.params.id)
 
@@ -230,7 +230,7 @@ export default {
                 console.log("videosData vaut : ", this.videosData.results);
 
             } catch (erreur) {
-                console.error("Une erreur s'est produite dans la récupération des infos de la video", erreur);
+                console.log("Une erreur s'est produite dans la récupération des infos de la video", erreur);
             }
         },
     //    async fetchImage(videoId){
@@ -274,7 +274,10 @@ export default {
     
     computed: {
         imageUrl() {
-            return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
+            if(this.video.poster_path){
+                return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
+
+            } else return 'No image available';
         },
 
         magicRoute() {
