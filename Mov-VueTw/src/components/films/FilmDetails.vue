@@ -118,6 +118,7 @@ import getDatas from '../../service/getDatas'
 import Toktok from '../../service/tok'
 //const toktok = process.env.TMDB_API_TOKTOK;
 export default {
+    name: 'filmDetails',
     components: {
         CastFilm,
         ImagesFilm,

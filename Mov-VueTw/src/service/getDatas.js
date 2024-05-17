@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import requete from "./api";
 
 const getDatas = {
@@ -20,7 +20,15 @@ const getDatas = {
         } catch (error) {
             console.error('erreur lors de la récupération des images', error);
         }
-    } 
+    },
+    async getPopMovie() {
+        try {
+            const response = await requete.get('movie/popular');
+            this.films = response.data.results;
+        } catch (error) {
+            console.error(error);
+        }
+    }
     
 }
 
