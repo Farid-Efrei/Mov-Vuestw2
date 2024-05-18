@@ -82,7 +82,7 @@
                     </div>
                     <br />
                     <div class="mt-10 flex items-center">
-                        <a :href="youtubeVideo" class="bg-red-500 px-6 py-6 rounded-lg text-xl font-semibold mr-10 inline-flex"
+                        <button @click="openTrailer" class="bg-red-500 px-6 py-6 rounded-lg text-xl font-semibold mr-10 inline-flex"
                         target="_blank">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-6 h-6 mr-5 mt-1">
@@ -91,7 +91,7 @@
                                     clip-rule="evenodd" />
                             </svg>
                             Bande-Annonce
-                        </a>
+                        </button>
                         <a href="#" class="bg-green-500 px-5 py-6 text-xl font-semibold rounded-lg inline-flex mr-10">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6 mr-5 mt-1">
@@ -105,7 +105,15 @@
             </div>
         </div>
         <CastFilm :casting="creditsData.cast"/>
-        <ImagesFilm :imagesVideo="imagesScenes.backdrops" />
+        <ImagesFilm :imagesVideo="imagesScenes.backdrops" @mediaSelected="openModal" />
+        <ModalMedia
+        v-if="showModal"
+        :showModal="showModal"
+        :mediaSrc="selectedMediaSrc"
+        :mediaAlt="selectedMediaAlt"
+        :mediaType="selectedMediaType"
+        @close="showModal = false"
+        />
     </div>
 </template>
 
@@ -117,11 +125,13 @@ import getDatas from '../../service/getDatas'
 // eslint-disable-next-line no-undef
 import Toktok from '../../service/tok'
 //const toktok = process.env.TMDB_API_TOKTOK;
+import ModalMedia from '@/components/items/ModalMedia.vue'
 export default {
     name: 'filmDetails',
     components: {
         CastFilm,
         ImagesFilm,
+        ModalMedia
     },
     data() {
         return {
@@ -132,6 +142,10 @@ export default {
             // imageData: {},
             imagesScenes: {},
             //toktok:'',
+            showModal: false,
+            selectedMediaSrc: "",
+            selectedMediaAlt: '',
+            selectedMediaType:''
 
         }
     },
@@ -315,6 +329,67 @@ export default {
 
         //     }
         // }
+
+        showTrailer() {
+            const trailerUrl = this.youtubeVideo();
+            if (trailerUrl) {
+                this.mediaUrl = trailerUrl;
+                this.mediaType = 'video';
+                this.modalTitle = 'Trailer';
+                this.showModal = true;
+            } else {
+                alert('Bande-Annonce non disponible pour cette vidéo')
+            }
+        },
+        // showImage(imageUrl) {
+        //     this.mediaUrl = this.getImageUrl(imageUrl);
+        //     this.mediaType = 'image';
+        //     this.modalTitle = 'Image';
+        //     this.showModal = true;
+        // },
+        getImageUrl(path) {
+            return 'https://image.tmdb.org/t/p/original/' + path;
+        },
+
+        openModal(media) {
+            this.selectedMediaSrc = media.mediaSrc;
+            this.selectedMediaAlt = media.mediaAlt;
+            this.selectedMediaType = media.mediaType;
+            this.showModal = true;
+        },
+
+        // closeModal() {
+        //     this.showModal = false;
+        //     // this.mediaUrl = '';
+        //     // this.mediaType = '';
+        //     this.selectedImageUrl = '';
+        // },
+        openTrailer() {
+            console.log('videoData.results :', this.videosData.results);
+
+            // Convertir le Proxy en tableau normal
+    //const resultsArray = Array.from(this.videosData.results);
+
+            //if (Array.isArray(this.videosData.results)) {
+ // Rechercher la bande-annonce
+            //const trailer = resultsArray.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+ const trailer = this.videosData.results.find(video => video.type === 'Trailer' && video.site === 'YouTube')
+               
+                if (trailer) {
+
+                    const youtubeUrl = trailer.key;
+                    const embedUrl = `https://www.youtube.com/embed/${youtubeUrl}`;
+                    console.log('Trailer ' + embedUrl);
+                    this.openModal({
+                        mediaSrc: embedUrl,
+                        mediaAlt: 'Trailer Video',
+                        mediaType: 'video'
+                    });
+                } else {
+                    alert('Bande-annonce non disponible pour cette vidéo.');
+                }
+            
+        }
     },
 
     computed: {
@@ -416,21 +491,21 @@ export default {
             }
         });
     },
-        youtubeVideo() {
+        // youtubeVideo() {
 
-            // const trailer = this.videosData.results.find(video => video.type === 'Trailer');
-            // return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : 'no found';
+        //     // const trailer = this.videosData.results.find(video => video.type === 'Trailer');
+        //     // return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : 'no found';
 
-        // console.log('videosData:', this.videosData);
-        if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
-            console.log('key:', this.videosData.results[0].key);
-            return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
-        } else {
-            console.log('No key found');
-            return 'no found';
-        }
+        // // console.log('videosData:', this.videosData);
+        // if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
+        //     console.log('key:', this.videosData.results[0].key);
+        //     return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
+        // } else {
+        //     console.log('No key found');
+        //     return null;
+        // }
 
-    }
+    // }
 
 },
 
