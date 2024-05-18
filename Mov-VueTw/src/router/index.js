@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import LesFilms from '@/views/LesFilms.vue'
 import FilmDetails from '@/components/films/FilmDetails.vue'
 import LesSeries from '@/views/LesSeries.vue'
+import LesAnims from '@/views/LesAnims.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,24 +32,35 @@ const router = createRouter({
       component: LesSeries
     },
     {
-      path:'/films/:id',
-      name: 'filmDetails',
-      component: FilmDetails,
-      props: { magicRoute: 'films' },
-      props: true,
-      //meta: {category : 'films'}
-      
-      
+      path: '/animations',
+      name: 'animations',
+      component: LesAnims,
     },
-    {
-      path:'/series/:id',
-      name: 'filmDetails',
-      component: FilmDetails,
-      props: { magicRoute: 'series' },
-      props:true,
-      //meta :{category : 'series'} 
+    // {
+    //   path:'/films/:id',
+    //   name: 'filmDetails',
+    //   component: FilmDetails,
+    //   //props: { magicRoute: 'films' },
+    //   props: true,
+    //   //meta: {category : 'films'}
+      
+      
+    // },
+    // {
+    //   path:'/series/:id',
+    //   name: 'filmDetails',
+    //   component: FilmDetails,
+    //   //props: { magicRoute: 'series' },
+    //   props:true,
+    //   //meta :{category : 'series'} 
      
-    },
+    // },
+    // {
+    //   path: '/animations/:id',
+    //   name: 'filmDetails',
+    //   component: FilmDetails,
+      
+    // },
     {
       path:'/:magicRoute/:id',
       name: 'filmDetails',

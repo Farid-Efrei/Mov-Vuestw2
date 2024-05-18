@@ -418,17 +418,17 @@ export default {
     },
         youtubeVideo() {
 
-            const trailer = this.videosData.results.find(video => video.type === 'Trailer');
-            return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : 'no found';
+            // const trailer = this.videosData.results.find(video => video.type === 'Trailer');
+            // return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : 'no found';
 
         // console.log('videosData:', this.videosData);
-        // if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
-        //     console.log('key:', this.videosData.results[0].key);
-        //     return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
-        // } else {
-        //     console.log('No key found');
-        //     return 'no found';
-        // }
+        if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
+            console.log('key:', this.videosData.results[0].key);
+            return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
+        } else {
+            console.log('No key found');
+            return 'no found';
+        }
 
     }
 

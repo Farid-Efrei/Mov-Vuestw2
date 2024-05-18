@@ -90,7 +90,8 @@ export default {
 
         computedMagicRoute() {
             // Si nous sommes dans la page des films, définissons magicRoute sur 'films'
-      if (this.$route.name === 'films') {
+            // ou par Animation si la video a un titre donc c'est un film. 
+      if (this.$route.name === 'films' || this.video.title) {
         return 'films';
       } else {
         // Sinon, nous sommes dans la page des séries, définissons magicRoute sur 'series'

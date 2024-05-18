@@ -43,10 +43,10 @@ export default {
     methods: {
         async getPopMovie() {
             try {
-                const response = await requete.get('movie/popular');
+                //const response = await requete.get('movie/popular');
                 // const response = await requete.get('movie/top_rated');
                 // const response = await requete.get('movie/upcoming');
-                // const response = await requete.get('movie/now_playing');
+                const response = await requete.get('movie/now_playing');
                 this.films = response.data.results;
             } catch (error) {
                 console.error('echec de la récupération de la liste des films populaires ', error);

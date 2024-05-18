@@ -34,8 +34,8 @@ export default {
     methods: {
         async getPopSeries() {
             try {
-                const seriesResponse = await requete.get('/tv/on_the_air');
-                // const seriesResponse = await requete.get('/tv/top_rated');
+                // const seriesResponse = await requete.get('/tv/on_the_air');
+                const seriesResponse = await requete.get('/tv/top_rated');
                 // const seriesResponse = await requete.get('/tv/popular');
                 this.series = seriesResponse.data.results;
             } catch (error) {
