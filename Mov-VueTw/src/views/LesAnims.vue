@@ -5,8 +5,10 @@
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
             <FilmItems
+            class="text-center"
             v-for="animation in animations" :key="animation.id"
             :video="animation"
+            :genres="genres"
             
             />
 
@@ -28,6 +30,7 @@ export default {
     }
     },
     async mounted() {
+        this.getAnimationGenres();
         this.getAnimationVideos();
     
     },
@@ -48,7 +51,21 @@ export default {
             } catch (error) {
              console.error("Erreur lors de la récupération des vidéos d'Animations", error);   
             }
+        },
+
+        async getAnimationGenres() {
+            try {
+                const [filmGenresResponse, serieGenresResponse] = await Promise.all([
+                    requete.get('/genre/movie/list'),
+                    requete.get('/genre/tv/list')
+                ]);
+                const filmGenres = filmGenresResponse.data.genres;
+                const serieGenres = serieGenresResponse.data.genres;
+                this.genres = [...filmGenres, ...serieGenres]
+            } catch (error) {
+                console.error('Erreur de récupération des noms des genres', error);
             }
+        }
         }
 
 }
