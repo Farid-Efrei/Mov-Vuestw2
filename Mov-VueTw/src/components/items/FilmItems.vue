@@ -45,11 +45,13 @@ export default {
             required: true
         },
         genres: {
-            required: true
+            type: Array,
+            default:() => []
         },
         genre_ids: {
             type: Array,
-            required: true
+            default:() => []
+
         }
     },
     setup() { },
@@ -58,24 +60,44 @@ export default {
         imageUrl() {
             return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
         },
-        mediaType() {
-            if (this.video.media_type === 'movie') {
-                return 'Film'
-            } else {
-                return 'Série'
+        mediaType() { 
+           
+            if (this.video.media_type ) {
+                return this.video.media_type === 'movie' ? 'Film' : 'Serie'
+                
             }
+            // if (this.video.media_type === 'movie') {
+            //     return 'Film'
+            // } else {
+            //     return 'Série'
+            // },
         },
-        magicRoute(){
-            if (this.video.media_type === 'movie') {
+        magicRoute() {
+            if (this.video && this.video.media_type) {
+                  if (this.video.media_type === 'movie'  ) {
                 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
                 return this.magicRoute = 'films'
             } else {
                 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
                 return this.magicRoute = 'series'
             }
+            }
+            
+            return this.computedMagicRoute();
         }
     },
     methods: {
+
+        computedMagicRoute() {
+            // Si nous sommes dans la page des films, définissons magicRoute sur 'films'
+            // ou par Animation si la video a un titre donc c'est un film. 
+      if (this.$route.name === 'films' || this.video.title) {
+        return 'films';
+      } else {
+        // Sinon, nous sommes dans la page des séries, définissons magicRoute sur 'series'
+        return 'series';
+      }
+        },
      /*    getGenreName(id) {
             const genre = this.genre_ids.find((genre) => genre.id === id)
             return genre ? genre.name : 'Inconnus'

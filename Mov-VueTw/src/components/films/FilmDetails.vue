@@ -1,7 +1,7 @@
 <template>
     <div class="">
         <div class="container flex mt-20 mx-auto border-b-2 border-green-200 pb-4">
-            <img :src="imageUrl" :alt="video.title || video.name" class="w-[100%] max-w-[100]" />
+            <img :src="imageUrl" :alt="video.title || video.name" class="w-auto max-w-[100]" />
 
             <div class="ml-24  ">
                 <div class="flex justify-between items-center">
@@ -82,7 +82,7 @@
                     </div>
                     <br />
                     <div class="mt-10 flex items-center">
-                        <a :href="youtubeVideo" class="bg-red-500 px-6 py-6 rounded-lg text-xl font-semibold mr-10 inline-flex"
+                        <button @click="openTrailer" class="bg-red-500 px-6 py-6 rounded-lg text-xl font-semibold mr-10 inline-flex"
                         target="_blank">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
                                 class="w-6 h-6 mr-5 mt-1">
@@ -91,7 +91,7 @@
                                     clip-rule="evenodd" />
                             </svg>
                             Bande-Annonce
-                        </a>
+                        </button>
                         <a href="#" class="bg-green-500 px-5 py-6 text-xl font-semibold rounded-lg inline-flex mr-10">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor" class="w-6 h-6 mr-5 mt-1">
@@ -105,7 +105,15 @@
             </div>
         </div>
         <CastFilm :casting="creditsData.cast"/>
-        <ImagesFilm :imagesVideo="imagesScenes.backdrops" />
+        <ImagesFilm :imagesVideo="imagesScenes.backdrops" @mediaSelected="openModal" />
+        <ModalMedia
+        v-if="showModal"
+        :showModal="showModal"
+        :mediaSrc="selectedMediaSrc"
+        :mediaAlt="selectedMediaAlt"
+        :mediaType="selectedMediaType"
+        @close="showModal = false"
+        />
     </div>
 </template>
 
@@ -113,35 +121,47 @@
 import CastFilm from '@/components/films/CastFilm.vue';
 import ImagesFilm from '@/components/films/ImagesFilm.vue';
 import requete from '../../service/api';
+import getDatas from '../../service/getDatas'
 // eslint-disable-next-line no-undef
 import Toktok from '../../service/tok'
 //const toktok = process.env.TMDB_API_TOKTOK;
+import ModalMedia from '@/components/items/ModalMedia.vue'
 export default {
+    name: 'filmDetails',
     components: {
         CastFilm,
         ImagesFilm,
+        ModalMedia
     },
     data() {
         return {
             video: {},
             last_episode_to_air: '',
             creditsData: {},
-            videosData:{},
-            imageData: {},
-            imagesScenes:{},
-            toktok:'',
-            
+            videosData: {},
+            // imageData: {},
+            imagesScenes: {},
+            //toktok:'',
+            showModal: false,
+            selectedMediaSrc: "",
+            selectedMediaAlt: '',
+            selectedMediaType:''
+
         }
     },
     mounted() {
         // this.fetchFilm(this.$route.params.id)
-        
-       
-        this.fetchSerieOrFilmV2(this.$route.params.id);
+        // const moviii = this.$route.params.id
+        // this.getMovieInfoById(moviii)
+        this.fetchDatas();
+
+
+        //this.fetchSerieOrFilmV2(this.$route.params.id);
+
         // this.fetchImage(this.$route.params.id);
         //console.log("imageUrl : " + this.imageUrl);
 
-        this.fetchBackdrops(this.$route.params.id)
+        //this.fetchBackdrops(this.$route.params.id)
 
         // console.log('chemin : ' + this.$route.params.id);
         // console.log('le media type est : ' + this.$route.params.magicRoute, this.$route.params.id);
@@ -154,7 +174,25 @@ export default {
          } */
 
     },
+    watch: {
+        '$route.params': {
+            immediate: true,
+            handler() {
+                this.fetchDatas();
+
+            }
+        }
+    },
     methods: {
+        // async getMovieInfoById(movieId) {
+        //     try {
+        //         const response = await getDatas.getMoviePhotosProdById(movieId)
+        //         this.moviii = response
+        //         console.log("Datas : ",this.moviii );
+        //     } catch (error) {
+        //         console.log(error);
+        //     }
+        // },
 
         /*  async fetchFilm(videoId){
         /*  async fetchFilm(videoId){
@@ -170,42 +208,43 @@ export default {
              )
              this.video = response.data
          }, */
-        async fetchSerieOrFilm(videoId) {
+        // async fetchSerieOrFilm(videoId) {
+        //     try {
+        //         const magicRoute = this.$route.params.magicRoute;
+
+        //         if (magicRoute === 'films') {
+        //             const response = await requete(
+        //                 `/movie/${videoId}` 
+        //             );
+        //             const responseCredits = await requete(`/movie/${videoId}/credits`);
+        //             const responseImages = await requete(`/movie/${videoId}/images`);
+
+        //             this.video = response.data;
+        //             this.creditsData = responseCredits.data;
+        //             this.imagesData = responseImages.data;
+        //             console.log(this.imagesData.posters);
+        //         } else {
+        //             const response = await requete(
+        //                 '/tv/' + videoId || `/tv/${videoId}/credits`
+        //             );
+        //             const responseCredits = await requete(`/tv/${videoId}/credits`);
+        //             const responseImages = await requete (`/tv/${videoId}/images`);
+        //             this.video = response.data;
+        //             this.creditsData = responseCredits.data;
+        //             this.imagesData = responseImages.data;
+        //         }
+        //         console.log("creditsData vaut : " + this.creditsData.cast);
+        //         console.log("imagesData vaut : " + this.imagesData.backdrops);
+        //     } catch (error) {
+        //         console.error("Une erreur s'est produite lros de la récupération de la video", error)
+        //     }
+        // },
+        async fetchSerieOrFilmV2(videoId) {
             try {
                 const magicRoute = this.$route.params.magicRoute;
-                
+
                 if (magicRoute === 'films') {
-                    const response = await requete(
-                        `/movie/${videoId}` 
-                    );
-                    const responseCredits = await requete(`/movie/${videoId}/credits`);
-                    const responseImages = await requete(`/movie/${videoId}/images`);
-
-                    this.video = response.data;
-                    this.creditsData = responseCredits.data;
-                    this.imagesData = responseImages.data;
-                    console.log(this.imagesData.posters);
-                } else {
-                    const response = await requete(
-                        '/tv/' + videoId || `/tv/${videoId}/credits`
-                    );
-                    const responseCredits = await requete(`/tv/${videoId}/credits`);
-                    const responseImages = await requete (`/tv/${videoId}/images`);
-                    this.video = response.data;
-                    this.creditsData = responseCredits.data;
-                    this.imagesData = responseImages.data;
-                }
-                console.log("creditsData vaut : " + this.creditsData.cast);
-                console.log("imagesData vaut : " + this.imagesData.backdrops);
-            } catch (error) {
-                console.error("Une erreur s'est produite lros de la récupération de la video", error)
-            }
-        }, async fetchSerieOrFilmV2(videoId){
-            try{
-                const magicRoute = this.$route.params.magicRoute;
-
-                if(magicRoute === 'films'){
-                    const [response, responseCredits,  responseVideos] = await Promise.all([
+                    const [response, responseCredits, responseVideos] = await Promise.all([
                         requete(`/movie/${videoId}`),
                         requete(`/movie/${videoId}/credits`),
                         requete(`/movie/${videoId}/videos`)
@@ -233,18 +272,26 @@ export default {
                 console.log("Une erreur s'est produite dans la récupération des infos de la video", erreur);
             }
         },
-    //    async fetchImage(videoId){
 
-    //     const response = await requete(`movie/${videoId}/images`, {accept :'application/json'});
-    //     this.imageData = response.data;
-    //     console.log(this.imageData);
+        async fetchDatas() {
+            const { magicRoute, id } = this.$route.params;
+            if (magicRoute && id) {
+                await this.fetchSerieOrFilmV2(id);
+                await this.fetchBackdrops(id);
+            }
+        },
+        //    async fetchImage(videoId){
+
+        //     const response = await requete(`movie/${videoId}/images`, {accept :'application/json'});
+        //     this.imageData = response.data;
+        //     console.log(this.imageData);
 
 
-    //     }
-        fetchBackdrops(videoId){
-          
+        //     }
+        fetchBackdrops(videoId) {
+
             //TODO: Provisoirement le token est stoké dans les services en attendant le côté serveur pour le stocker et faire des appels !
-            
+
             const options = {
                 method: 'GET',
                 headers: {
@@ -253,138 +300,216 @@ export default {
                 }
             };
             const magicRoute = this.$route.params.magicRoute;
-            if (magicRoute === 'films'){
+            if (magicRoute === 'films') {
                 fetch(`https://api.themoviedb.org/3/movie/${videoId}/images`, options)
-                .then (response => response.json() )
-                .then (data => {this.imagesScenes = data;
-                console.log(this.imagesScenes)
-                })
-                .catch(err => console.error(err))
+                    .then(response => response.json())
+                    .then(data => {
+                        this.imagesScenes = data;
+                        console.log(this.imagesScenes)
+                    })
+                    .catch(err => console.error(err))
             } else {
                 fetch(`https://api.themoviedb.org/3/tv/${videoId}/images`, options)
-                .then (response => response.json() )
-                .then (data => {this.imagesScenes = data;
-                console.log(this.imagesScenes)
-                })
-                .catch(err => console.error(err))
+                    .then(response => response.json())
+                    .then(data => {
+                        this.imagesScenes = data;
+                        console.log(this.imagesScenes)
+                    })
+                    .catch(err => console.error(err))
             }
 
+        },
+        // async fetchBackdropsV2(videoId) {
+        //     try {
+        //         const imagesResponse = await requete.getImagesByVideoId(videoId);
+        //         console.log('Images Response:', imagesResponse.data);
+        //         this.imagesScenes = imagesResponse.data;
+        //     } catch (error) {
+        //         console.error('Echec de la recup des images', error);
+
+        //     }
+        // }
+
+        showTrailer() {
+            const trailerUrl = this.youtubeVideo();
+            if (trailerUrl) {
+                this.mediaUrl = trailerUrl;
+                this.mediaType = 'video';
+                this.modalTitle = 'Trailer';
+                this.showModal = true;
+            } else {
+                alert('Bande-Annonce non disponible pour cette vidéo')
             }
         },
-    
+        // showImage(imageUrl) {
+        //     this.mediaUrl = this.getImageUrl(imageUrl);
+        //     this.mediaType = 'image';
+        //     this.modalTitle = 'Image';
+        //     this.showModal = true;
+        // },
+        getImageUrl(path) {
+            return 'https://image.tmdb.org/t/p/original/' + path;
+        },
+
+        openModal(media) {
+            this.selectedMediaSrc = media.mediaSrc;
+            this.selectedMediaAlt = media.mediaAlt;
+            this.selectedMediaType = media.mediaType;
+            this.showModal = true;
+        },
+
+        // closeModal() {
+        //     this.showModal = false;
+        //     // this.mediaUrl = '';
+        //     // this.mediaType = '';
+        //     this.selectedImageUrl = '';
+        // },
+        openTrailer() {
+            console.log('videoData.results :', this.videosData.results);
+
+            // Convertir le Proxy en tableau normal
+    //const resultsArray = Array.from(this.videosData.results);
+
+            //if (Array.isArray(this.videosData.results)) {
+ // Rechercher la bande-annonce
+            //const trailer = resultsArray.find(video => video.type === 'Trailer' && video.site === 'YouTube');
+ const trailer = this.videosData.results.find(video => video.type === 'Trailer' && video.site === 'YouTube')
+               
+                if (trailer) {
+
+                    const youtubeUrl = trailer.key;
+                    const embedUrl = `https://www.youtube.com/embed/${youtubeUrl}`;
+                    console.log('Trailer ' + embedUrl);
+                    this.openModal({
+                        mediaSrc: embedUrl,
+                        mediaAlt: 'Trailer Video',
+                        mediaType: 'video'
+                    });
+                } else {
+                    alert('Bande-annonce non disponible pour cette vidéo.');
+                }
+            
+        }
+    },
+
     computed: {
         imageUrl() {
-            if(this.video.poster_path){
-                return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
+            return this.video.poster_path ? `https://image.tmdb.org/t/p/original${this.video.poster_path}` : "pas d'image disponible";
+            // if(this.video.poster_path){
+            //     return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
 
-            } else return 'No image available';
+            // } else return 'No image available';
         },
 
         magicRoute() {
-            const magicRoute = this.$route.params.magicRoute;
-            if (magicRoute === 'series') {
-                return true;
-            } else {
-                return false;
-            }
+            return this.$route.params.magicRoute;
 
-
+            // const magicRoute = this.$route.params.magicRoute;
+            // if (magicRoute === 'series') {
+            //     return true;
+            // } else {
+            //     return false;
         },
-        // crewJob(){
-        //     if ( this.creditsData.crew.job) {
-        //         console.log(this.creditsData.crew.job)
-                
-        //         if (this.creditsData.crew.job === 'Director'){
-        //             return 'Réalisation';
-                    
-        //         }else if (this.crew.job === 'Novel') {
-        //             return 'adapté du Roman de';
-                    
-        //         } else if (this.crew.job === 'Screenplay'){
-        //             return 'Scénario';
-        //         } else if (this.crew.job === 'Producer'){
-        //             return 'Producteur'
-        //     } else if (this.crew.job === 'Executive Producer'){
-        //         return 'Producteur exécutif'
-        //     } else if (this.crew.job === 'Writer'){
-        //         return 'Scénariste' 
-        //     } else if (this.crew.job === 'Editor'){
-        //         return 'Editeur'
-        //     } else if (this.crew.job === 'Director of Photography'){
-        //         return 'Directeur visuel'
-        //     } else if (this.crew.job === 'Original Music Composer'){
-        //         return 'Compositeur bande originale'
-        //     } else if (this.crew.job === 'Orginal Film Writer'){
-        //         return 'Réalisateur du film original'
-        //     } else if (this.crew.job === 'Co-Director'){
-        //         return 'Co-réalisation'
-        //     } else if (this.crew.job === 'Associate Editor'){
-        //         return 'Edition'
-        //     } else if (this.crew.job === 'Co-Executive Producer'){
-        //         return 'Producteur executif associé'
-        //     } else if (this.crew.job === 'Other'){
-        //         return 'Autre rôle'
-        //     } else return 'Autre';
-        // } else return 'non spécifié';
-        // },
-
-        crewJobs() {
-  if (!this.creditsData.crew || !Array.isArray(this.creditsData.crew)) {
-   return []
-  }
-
-  return this.creditsData.crew.map(member => {
-    switch (member.job) {
-      case 'Director':
-        return 'Réalisation';
-      case 'Novel':
-        return 'Adapté du Roman de';
-      case 'Screenplay':
-        return 'Scénario';
-      case 'Producer':
-        return 'Producteur';
-      case 'Executive Producer':
-        return 'Producteur exécutif';
-      case 'Writer':
-        return 'Scénariste';
-      case 'Editor':
-        return 'Editeur';
-      case 'Director of Photography':
-        return 'Directeur visuel';
-      case 'Original Music Composer':
-        return 'Compositeur de la bande originale';
-      case 'Orginal Film Writer':
-        return 'Scénariste du film original';
-      case 'Co-Director':
-        return 'Co-réalisation';
-      case 'Associate Editor':
-        return 'Editeur associé';
-      case 'Co-Executive Producer':
-        return 'Producteur exécutif associé';
-      case 'Other':
-        return 'Autre rôle';
-      default:
-        return 'Non spécifié';
-    }
-  });
-},
-    youtubeVideo(){
-        
-  console.log('videosData:', this.videosData);
-  if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
-    console.log('key:', this.videosData.results[0].key);
-    return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
-  } else {
-    console.log('No key found');
-    return 'no found';
-  }
-
-    }
 
 
+    
+    // crewJob(){
+    //     if ( this.creditsData.crew.job) {
+    //         console.log(this.creditsData.crew.job)
 
+    //         if (this.creditsData.crew.job === 'Director'){
+    //             return 'Réalisation';
+
+    //         }else if (this.crew.job === 'Novel') {
+    //             return 'adapté du Roman de';
+
+    //         } else if (this.crew.job === 'Screenplay'){
+    //             return 'Scénario';
+    //         } else if (this.crew.job === 'Producer'){
+    //             return 'Producteur'
+    //     } else if (this.crew.job === 'Executive Producer'){
+    //         return 'Producteur exécutif'
+    //     } else if (this.crew.job === 'Writer'){
+    //         return 'Scénariste' 
+    //     } else if (this.crew.job === 'Editor'){
+    //         return 'Editeur'
+    //     } else if (this.crew.job === 'Director of Photography'){
+    //         return 'Directeur visuel'
+    //     } else if (this.crew.job === 'Original Music Composer'){
+    //         return 'Compositeur bande originale'
+    //     } else if (this.crew.job === 'Orginal Film Writer'){
+    //         return 'Réalisateur du film original'
+    //     } else if (this.crew.job === 'Co-Director'){
+    //         return 'Co-réalisation'
+    //     } else if (this.crew.job === 'Associate Editor'){
+    //         return 'Edition'
+    //     } else if (this.crew.job === 'Co-Executive Producer'){
+    //         return 'Producteur executif associé'
+    //     } else if (this.crew.job === 'Other'){
+    //         return 'Autre rôle'
+    //     } else return 'Autre';
+    // } else return 'non spécifié';
+    // },
+
+    crewJobs() {
+        if (!this.creditsData.crew || !Array.isArray(this.creditsData.crew)) {
+            return []
+        }
+
+        return this.creditsData.crew.map(member => {
+            switch (member.job) {
+                case 'Director':
+                    return 'Réalisation';
+                case 'Novel':
+                    return 'Adapté du Roman de';
+                case 'Screenplay':
+                    return 'Scénario';
+                case 'Producer':
+                    return 'Producteur';
+                case 'Executive Producer':
+                    return 'Producteur exécutif';
+                case 'Writer':
+                    return 'Scénariste';
+                case 'Editor':
+                    return 'Editeur';
+                case 'Director of Photography':
+                    return 'Directeur visuel';
+                case 'Original Music Composer':
+                    return 'Compositeur de la bande originale';
+                case 'Orginal Film Writer':
+                    return 'Scénariste du film original';
+                case 'Co-Director':
+                    return 'Co-réalisation';
+                case 'Associate Editor':
+                    return 'Editeur associé';
+                case 'Co-Executive Producer':
+                    return 'Producteur exécutif associé';
+                case 'Other':
+                    return 'Autre rôle';
+                default:
+                    return 'Non spécifié';
+            }
+        });
     },
-}
+        // youtubeVideo() {
+
+        //     // const trailer = this.videosData.results.find(video => video.type === 'Trailer');
+        //     // return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : 'no found';
+
+        // // console.log('videosData:', this.videosData);
+        // if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
+        //     console.log('key:', this.videosData.results[0].key);
+        //     return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
+        // } else {
+        //     console.log('No key found');
+        //     return null;
+        // }
+
+    // }
+
+},
+
+    }
 </script>
 
 
