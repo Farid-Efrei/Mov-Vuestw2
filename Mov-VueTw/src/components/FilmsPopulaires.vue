@@ -5,14 +5,14 @@
         </h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
-            <FilmItems v-for="video in videos" :key="video.id" :video="video" :genres="genres" :genre_ids="video.genre_ids" />
+            <FilmItems v-for="video in videos" :key="video.id" :video="video" :genres="genres" :genre_ids="video.genre_ids" class=""/>
         </div>
     </div>
 </template>
 
 <script>
-import FilmItems from '@/components/items/FilmItems.vue'
-import requete from '../service/api'
+import FilmItems from '@/components/items/FilmItems.vue';
+import requete from '../service/api';
 export default {
     components: {
         FilmItems

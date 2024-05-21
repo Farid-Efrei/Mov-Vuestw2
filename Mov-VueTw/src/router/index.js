@@ -4,6 +4,11 @@ import LesFilms from '@/views/LesFilms.vue'
 import FilmDetails from '@/components/films/FilmDetails.vue'
 import LesSeries from '@/views/LesSeries.vue'
 import LesAnims from '@/views/LesAnims.vue'
+import LoginView from '@/views/LoginView.vue'
+import RegisterView from '@/views/RegisterView.vue'
+import UserProfile from '@/views/UserProfile.vue'
+import {authGuard} from '../service/guards/authGuard'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,33 +18,43 @@ const router = createRouter({
     {path: '/films', name: 'films', component: LesFilms },
     {path: '/series',name: 'series',component: LesSeries},
     {path: '/animations', name: 'animations', component: LesAnims },
-    {path: '/:magicRoute/:id', name: 'filmDetails', component: FilmDetails }
+    {path: '/:magicRoute/:id', name: 'filmDetails', component: FilmDetails, meta: {requiresAuth: false} },
+    {path:'/login', name: 'login', component: LoginView},
+    {path:'/register', name: 'register', component: RegisterView},
+    {path:'profile', name: 'profile', component: UserProfile,
+      meta: { requiresAuth : true}
+    }
+
+    
     // {
-    //   path:'/films/:id',
-    //   name: 'filmDetails',
-    //   component: FilmDetails,
-    //   //props: { magicRoute: 'films' },
-    //   props: true,
-    //   //meta: {category : 'films'}
+      //   path:'/films/:id',
+      //   name: 'filmDetails',
+      //   component: FilmDetails,
+      //   //props: { magicRoute: 'films' },
+      //   props: true,
+      //   //meta: {category : 'films'}
+      
+      
+      // },
+      // {
+        //   path:'/series/:id',
+        //   name: 'filmDetails',
+        //   component: FilmDetails,
+        //   //props: { magicRoute: 'series' },
+        //   props:true,
+        //   //meta :{category : 'series'}
 
-
-    // },
-    // {
-    //   path:'/series/:id',
-    //   name: 'filmDetails',
-    //   component: FilmDetails,
-    //   //props: { magicRoute: 'series' },
-    //   props:true,
-    //   //meta :{category : 'series'} 
-
-    // },
-    // {
-    //   path: '/animations/:id',
-    //   name: 'filmDetails',
-    //   component: FilmDetails,
-
-    // },
-  ]
-})
+        
+        // },
+        // {
+          //   path: '/animations/:id',
+          //   name: 'filmDetails',
+          //   component: FilmDetails,
+          
+          // },
+        ]
+      });
+      // Guard pour protéger la route du profil:
+      router.beforeEach(authGuard)
 
 export default router

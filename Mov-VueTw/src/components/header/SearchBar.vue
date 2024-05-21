@@ -8,7 +8,7 @@
       class="rounded-full bg-green-800 focus:shadow w-96 pl-7"
       @input="debouncingSearch"
       v-model="searchTerm"
-<<<<<<
+
       @blur="handleBlur"
       
     />
@@ -30,7 +30,7 @@
       </svg>
     </div>
 
-<<<<<<
+
     <div 
     class="absolute mt-16 ml-3 bg-green-800 rounded w-9/12"
     v-if="showSearchResults"
@@ -43,9 +43,9 @@
           :key="index"
           class="flex items-center border-b-2 border-yellow-300 p-1"
         >
-<<<<<<
+
         <!-- <RouterLink :to="{name:'filmDetails', params: {id:multi.id, magicRoute:multi.media_type}}"> -->
-        <router-link :to="getDetailsRoute(multi)">
+        <router-link :to="getDetailsRoute(multi)" class="">
           
           <img
           :src="videoImages(multi.poster_path)"
@@ -56,7 +56,7 @@
           <span class="font-serif text-lg text-center">
             {{ multi.title || multi.original_name }}
           </span>
-<<<<
+
         </router-link>
 
         </li>
@@ -84,7 +84,7 @@ export default {
       searchResult: [],
       noResultFound: false,
       searchTerm: "",
-<<<<<
+
       showSearchResults:false,
 
     }
@@ -98,7 +98,7 @@ export default {
         //on veut que la recherche se lance à partir de 3 caractères:
         if (event.target.value.length > 2) {
           this.fetchSearch(event.target.value)
-<<<<<<
+
           this.showSearchResults = true
         } else {
           this.searchResult = []
