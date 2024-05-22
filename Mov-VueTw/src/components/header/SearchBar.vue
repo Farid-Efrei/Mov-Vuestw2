@@ -1,6 +1,6 @@
 <template>
 
-  <div class="mt-5 size-fit flex relative"
+  <div class="mt-5 size-fit flex relative z-50"
   @click.stop>
     <input
       type="text"

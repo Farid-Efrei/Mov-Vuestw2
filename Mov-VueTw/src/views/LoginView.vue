@@ -30,11 +30,18 @@
                 class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Connexion
             </button>
+            <div class="flex justify-between">
+
+    
             <router-link to="/forgot-password" class="hover:text-orange-400" >
                 <!-- // TODO:composant mot de passe oublié à gérer !!! -->
                 <p class="text-sm my-4"> Mot de passe oublié ? </p>
             </router-link>
-            
+            <router-link to="/register" class="hover:text-orange-400" >
+                
+                <p class="text-sm my-4"> Pas de compte ? <b>Inscris Toi !</b> </p>
+            </router-link>
+            </div>
         </div>
         </form>
         <p v-if="error" 

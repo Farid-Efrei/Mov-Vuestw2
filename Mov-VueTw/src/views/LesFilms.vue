@@ -1,11 +1,11 @@
 <template>
-    <div>
+    <div >
         <h1 class=" uppercase text-center font-semibold  text-yellow-500 text-3xl underline m-16 animate-pulse">Section
             Films</h1>
         <div class="grid sm:grid-cols-3 md: grid-cols-4
         lg:grid-cols-5 gap-8 ">
             <FilmItems 
-            class="text-pretty text-center text-lg"
+            class="text-pretty text-center text-lg -z-0"
             v-for="film in films" 
             :key="film.id" 
             :video="film" 
