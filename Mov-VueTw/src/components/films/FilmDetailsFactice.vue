@@ -1,27 +1,34 @@
 <template>
-    <div v-if="movie">
-      <h1>{{ movie.title }}</h1>
-      <h2>Comments</h2>
-      <ul>
-        <li v-for="comment in movieComments" :key="comment.id">{{ comment.content }}</li>
+    <div v-if="movie" class="p-6 max-w-lg mx-auto rounded-xl shadow-md space-y-4">
+      <h1 class="text-3xl font-bold  text-orange-300">{{ movie.title }} </h1>
+      <img :src="movie.image" :alt="movie.title" class="w-full h-auto">
+      <h2 class="text-xl font-semibold text-orange-300">Commentaires :</h2>
+      <ul class="list-disc pl-5">
+        <li v-for="comment in movieCommentsWithAuthors" :key="comment.id" class="mt-2 text-lg">"{{ comment.content }}" de {{ comment.author }}</li>
       </ul>
-      <h2>Ratings</h2>
-      <ul>
-        <li v-for="rating in movieRatings" :key="rating.id">{{ rating.rating }} stars</li>
+      <h2 class="text-xl font-semibold text-orange-300" >Notes : </h2>
+      <ul class="list-disc pl-5">
+        <li v-for="rating in movieRatings" :key="rating.id" class="mt-2 text-lg">{{ rating.rating }}/5 étoiles</li>
       </ul>
-      <div v-if="isLoggedIn">
-        <form @submit.prevent="addNewComment">
-          <input v-model="newComment" placeholder="Add a comment">
-          <button type="submit">Add Comment</button>
-        </form>
-        <form @submit.prevent="addNewRating">
-          <input v-model.number="newRating" type="number" min="1" max="5" placeholder="Rate (1-5)">
-          <button type="submit">Add Rating</button>
-        </form>
-        <button @click="addToFavorites">Add to Favorites</button>
-      </div>
+
+    <div v-if="isLoggedIn" class="mt-6 space-y-4">
+      <form @submit.prevent="addNewComment" class="flex flex-col space-y-2">
+        <input v-model="newComment" placeholder="Ajouter un commentaire" class="p-2 border rounded">
+        <button type="submit" class="p-2 bg-blue-500 text-white rounded">Ajouter un Commentaire</button>
+      </form>
+      
+      <form @submit.prevent="addNewRating" class="flex flex-col space-y-2">
+        <input v-model.number="newRating" type="number" min="1" max="5" placeholder="Noter (1-5)" class="p-2 border rounded">
+        <button type="submit" class="p-2 bg-blue-500 text-white rounded">Ajouter une Note</button>
+      </form>
+      
+      <button @click="addToFavorites" class="p-2 bg-green-500 text-white rounded">Ajouter aux Favoris</button>
     </div>
-  </template>
+  </div>
+  <div v-else class="p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md space-y-4">
+    <p>Chargement...</p>
+  </div>
+</template>
   
   <script>
   import { useFacticeUserStore } from '@/stores/facticeUserStore';
@@ -41,6 +48,14 @@
       movieComments() {
         const userStore = useFacticeUserStore();
         return userStore.comments.filter(comment => comment.movieId === parseInt(this.$route.params.id));
+      },
+      movieCommentsWithAuthors(){
+        const userStore = useFacticeUserStore();
+        return userStore.comments.filter(comment => comment.movieId === parseInt(this.$route.params.id))
+        .map(comment => {
+          const user = userStore.users.find(user => user.id === comment.userId);
+          return {...comment, author: user ? user.username : 'Inconnu'};
+        });
       },
       movieRatings() {
         const userStore = useFacticeUserStore();

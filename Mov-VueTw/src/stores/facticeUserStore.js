@@ -4,30 +4,49 @@ export const useFacticeUserStore = defineStore('facticeUser', {
     state: () => ({
         users: [
             { id: 1, email: 'user1@example.com', username: 'Fairytale', password: 'password1' },
-            { id: 2, email: 'user2@example.com', username: 'user2', password: 'password2' }
+            { id: 2, email: 'user2@example.com', username: 'user2', password: 'password2' },
+            { id: 3, email: 'user3@example.com', username: 'user3', password: 'password3' },
         ],
         currentUser: null,
         movies: [
-            { id: 1, title: "Inception" },
-            { id: 2, title: "Interstellar" },
-            { id: 3, title: "J'ai rencontré le diable" },
+            { id: 1, title: "Inception", image:'../assets/Inception.jpg' },
+            { id: 2, title: "Interstellar", image:'../assets/insterstellar.jpg' },
+            { id: 3, title: "J'ai rencontré le diable", image:'../assets/I_Saw_Dev.jpeg' },
+            {id: 4, title: "Akira", image:'../assets/Akira.jpg' },
+            { id: 5, title: "Joker", image:'../assets/Joker.jpg' },
+            { id: 6, title: "l'auberge Okko", image:'../assets/wakaokami_wa_shougakusei.webp' },
         ],
         favorites: [
             { userId: 1, movieId: 3 },
             { userId: 2, movieId: 1 },
-            { userId: 1, movieId: 2 }
+            { userId: 1, movieId: 2 },
+            {userId:1, movieId:6},
+            {userId:1, movieId:5},
+           { userId:2, movieId:4},
+           { userId:3, movieId:4},
+           { userId:3, movieId:6},
+           { userId:3, movieId:3}
         ],
         comments: [
             { userId: 1, movieId: 3, content: "Magistral !!!", id: 1 },
             { userId: 2, movieId: 3, content: "Flippant et Stressant", id: 2 },
             { userId: 1, movieId: 1, content: "Une référence !", id: 3 },
             { userId: 2, movieId: 2, content: "Un voyage intersidéral", id: 4 },
+            {userId:3, movieId:6, content: "Trop émouvant et plein de moralités, à découvrir d'urgence en Famille", id: 5 },
+            {userId:1, movieId:5, content: "Intense et puissant, on est partagé dans ce film du début à la fin", id: 6 },
+            {userId: 1, movieId:6, content: "entrainant", id: 7 },
+            {userId: 3, movieId:4, content:"Masterclass malgré les années, impitoyable et la moto... tout est parfait ! a voir et revoir", id: 8}
         ],
         ratings: [
             { userId: 1, movieId: 3, rating: 5, id: 1 },
             { userId: 2, movieId: 1, rating: 1, id: 2 },
             { userId: 1, movieId: 1, rating: 4.5, id: 3 },
-            { userId: 2, movieId: 2, rating: 3, id: 4 }
+            { userId: 2, movieId: 2, rating: 3, id: 4 },
+            { userId: 3, movieId: 3, rating: 4.5, id: 5 },
+            {userId:1, movieId: 6, rating:4, id: 6 },
+            { userId:2, movieId: 4, rating: 2, id: 7 },
+            {userId:3, movieId:4, rating: 5, id:8},
+            { userId:3, movieId: 6, rating:5}
         ]
     }),
     getters: {

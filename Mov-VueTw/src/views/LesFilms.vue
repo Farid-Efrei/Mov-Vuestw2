@@ -5,7 +5,7 @@
         <div class="grid sm:grid-cols-3 md: grid-cols-4
         lg:grid-cols-5 gap-8 ">
             <FilmItems 
-            class="text-pretty text-center text-lg -z-0"
+            class="text-pretty text-center text-lg"
             v-for="film in films" 
             :key="film.id" 
             :video="film" 

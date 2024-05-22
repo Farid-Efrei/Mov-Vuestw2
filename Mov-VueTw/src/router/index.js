@@ -25,7 +25,7 @@ const router = createRouter({
     {path:'/profile', name: 'profile', component: UserProfile,
       meta: { requiresAuth : true}
     },
-     {path:'/factice', name:'filmDetailsFactice', component: FilmDetailsFactice},
+     {path:'/factice/:id', name:'filmDetailsFactice', component: FilmDetailsFactice},
     // { path: '/:magicRoute/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice, meta: { requiresAuth: false } }
 
     
