@@ -8,6 +8,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import {authGuard} from '../service/guards/authGuard'
+import FilmDetailsFactice from '@/components/films/FilmDetailsFactice.vue'
 
 
 const router = createRouter({
@@ -21,9 +22,11 @@ const router = createRouter({
     {path: '/:magicRoute/:id', name: 'filmDetails', component: FilmDetails, meta: {requiresAuth: false} },
     {path:'/login', name: 'login', component: LoginView},
     {path:'/register', name: 'register', component: RegisterView},
-    {path:'profile', name: 'profile', component: UserProfile,
+    {path:'/profile', name: 'profile', component: UserProfile,
       meta: { requiresAuth : true}
-    }
+    },
+     {path:'/factice', name:'filmDetailsFactice', component: FilmDetailsFactice},
+    // { path: '/:magicRoute/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice, meta: { requiresAuth: false } }
 
     
     // {

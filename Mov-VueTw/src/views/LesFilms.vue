@@ -11,14 +11,22 @@
             :video="film" 
             :genres="genres" 
             />
-
+            
         </div>
+        <ul class="grid grid-cols-3   border">
+            <li v-for="movie in movies" :key="movie.id" class="flex-1 text-lg font-semibold border text-center m-5 bg-green-300 text-red-500 shadow-md">
+                <router-link :to="{name:'filmDetailsFactice', params: {id:movie.id, magicRoute:'films'}}">{{ movie.title }}</router-link>
+                {{ movie.comments }}
+
+            </li>
+        </ul>
     </div>
 </template>
 <script>
 
 import FilmItems from '@/components/items/FilmItems.vue';
 import requete from '@/service/api';
+import { useFacticeUserStore } from '@/stores/facticeUserStore';
 export default {
     components: {
         FilmItems
@@ -33,10 +41,15 @@ export default {
             
         }
     },
-     mounted() {
+    mounted() {
         // l'ordre a une importance !!! 
         this.fetchGenres();
         this.getPopMovie();
+
+        const userStore = useFacticeUserStore();
+        userStore.fetchFavorites();
+        userStore.fetchComments();
+        userStore.fetchRatings();
         
         
     },
@@ -76,6 +89,11 @@ export default {
         //         return 'series';
         //     }
         // }
+
+        movies(){
+            const userStore = useFacticeUserStore();
+            return userStore.movies;
+        }
     }
 }
 </script>

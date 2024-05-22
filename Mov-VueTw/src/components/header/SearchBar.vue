@@ -67,16 +67,47 @@
       </ul>
     </div>
 
-    <img
+    <div class="relative">
+
+      
+      <img
       src="../../assets/Goku-Dragon.webp"
       alt="avatar de profil"
-      class="size-16 rounded-full mr-1 ml-12"
-    />
+      class="size-16 rounded-full mr-5 ml-12 cursor-pointer"
+      @click="toggleMenu"
+      />
+      <div v-if="showMenu"
+      class="absolute right-0 bg-white rounded shadow-lg py-2 w-48"
+      >
+        <div v-if="isAuthenticated">
+          <router-link to="/profile"
+          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+          <span class="flex items-center">
+            <span class="mr-2">Profil</span>
+            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+          </span>
+        </router-link>
+        <button @click="logout"
+        class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+          Déconnexion
+        </button>
+        </div>
+        <div v-else>
+          <router-link to="/login"
+          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" >
+            Connexion
+          </router-link>
+        </div>
+
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import requete from '../../service/api'
+import { useFacticeUserStore } from '@/stores/facticeUserStore'
+import { computed } from 'vue'
 
 export default {
   data() {
@@ -86,8 +117,19 @@ export default {
       searchTerm: "",
 
       showSearchResults:false,
+      showMenu: false,
 
     }
+  },
+  setup() {
+    const userStore = useFacticeUserStore();
+    const isAuthenticated = computed(() => userStore.isAuthenticated);
+    const userProfilePicture = computed(() => userStore.userProfilePicture || '../../assets/Goku-Dragon.webp');
+
+    return {
+      isAuthenticated,
+      userProfilePicture
+    };
   },
 
   methods: {
@@ -154,6 +196,15 @@ export default {
       }
       
 
+    },
+
+    toggleMenu(){
+      this.showMenu = !this.showMenu;
+    },
+    logout(){
+      const userStore = useFacticeUserStore();
+      userStore.logout();
+      this.$route.push({name:'home'})
     }
   }
 }

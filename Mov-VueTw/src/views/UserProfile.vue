@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <h1>Profil Utilisateur</h1>
-        <div v-if="profile">
+    <div class="flex-row m-5">
+        <h1 class="text-xl">Profil Utilisateur de {{profile.username }}</h1>
+        <div v-if="profile" class="flex-row justify-center">
             <p>Email : {{ profile.email }}</p>
             <p>Username: {{ profile.username }}</p>
 
@@ -12,14 +12,14 @@
 
             <h2>Commentaires</h2>
             <ul>
-                <li v-for="comment in comments" :key="comment.id">
+                <li v-for="comment in userComments" :key="comment.id">
                     {{ comment.content }} on {{ comment.movieTitle }}
                 </li>
             </ul>
 
             <h2>Notes</h2>
             <ul>
-                <li v-for="rating in ratings" :key="rating.id">
+                <li v-for="rating in userRatings" :key="rating.id">
                     {{ rating.rating }} étoiles pour {{ rating.movieTitle }}
                 </li>
             </ul>
@@ -49,36 +49,23 @@
     </div>
 </template>
 <script>
-import {useFacticeUserStore} from '@stores/facticeUserStore'
+import {useFacticeUserStore} from '@/stores/facticeUserStore'
 
 export default {
     data() {
         return {
+            profile: {},
+            favorite: {},
+            comments: {},
+            ratings:{},
             password : {
                 oldPassword : '',
-                newPassword : ''
+                newPassword : '',
+                
             }
         };
     },
-    computed : {
-        profile(){
-            const userStore = useFacticeUserStore();
-            return userStore.userProfile;
-        },
-
-        favorites(){
-            const userStore = useFacticeUserStore();
-            return userStore.userFavorites;
-        },
-        comments(){
-            const userStore = useFacticeUserStore();
-            return userStore.movieComments;
-        },
-        ratings(){
-            const userStore = useFacticeUserStore();
-            return userStore.userRatings;
-        }
-    },
+    
     methods:{
         async updateProfile(){
             const userStore = useFacticeUserStore();
@@ -96,12 +83,16 @@ export default {
         }
     },
 
-    mounted(){
+    async mounted(){
         const userStore = useFacticeUserStore();
-        userStore.fetchProfile();
-        userStore.fetchFavorites();
-        userStore.fetchComments(); // Passer les paramètres appropriés si nécessaire
-    userStore.fetchRatings(); // Passer les paramètres appropriés si nécessaire
+       await userStore.fetchProfile();
+        await userStore.fetchFavorites();
+        await userStore.fetchComments(); // Passer les paramètres appropriés si nécessaire
+    await userStore.fetchRatings(); // Passer les paramètres appropriés si nécessaire
+    this.profile = userStore.userProfile;
+    this.favorites = userStore.userFavorites;
+    this.comments = userStore.movieComments;
+    this.ratings = userStore.userRatings;
     }
 }
 </script>
