@@ -1,7 +1,7 @@
 <template>
-    <div class="">
-        <div class="container flex mt-20 mx-auto border-b-2 border-green-200 pb-4">
-            <img :src="imageUrl" :alt="video.title || video.name" class="w-auto max-w-[100]" />
+    <div class="container mx-auto mt-20 px-4">
+        <div class="container flex  border-b-2 border-green-200 pb-4">
+            <img :src="imageUrl" :alt="video.title || video.name" class="size-full max-w-[100] object-cover" />
 
             <div class="ml-24  ">
                 <div class="flex justify-between items-center">
@@ -402,14 +402,14 @@ export default {
         },
 
         magicRoute() {
-            return this.$route.params.magicRoute;
+            // return this.$route.params.magicRoute;
 
-            // const magicRoute = this.$route.params.magicRoute;
-            // if (magicRoute === 'series') {
-            //     return true;
-            // } else {
-            //     return false;
-        },
+            const magicRoute = this.$route.params.magicRoute;
+            if (magicRoute === 'series') {
+                return true;
+            } else {
+                return false;
+        }},
 
 
     

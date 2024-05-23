@@ -19,7 +19,7 @@ const router = createRouter({
     {path: '/films', name: 'films', component: LesFilms },
     {path: '/series',name: 'series',component: LesSeries},
     {path: '/animations', name: 'animations', component: LesAnims },
-    {path: '/:magicRoute/:id', name: 'filmDetails', component: FilmDetails, meta: {requiresAuth: false} },
+    {path: '/:magicRoute/:id', name: 'filmDetails', component: FilmDetails, meta: {requiresAuth: false}},
     {path:'/login', name: 'login', component: LoginView},
     {path:'/register', name: 'register', component: RegisterView},
     {path:'/profile', name: 'profile', component: UserProfile,

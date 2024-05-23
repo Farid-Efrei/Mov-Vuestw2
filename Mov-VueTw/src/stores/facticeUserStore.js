@@ -8,6 +8,7 @@ export const useFacticeUserStore = defineStore('facticeUser', {
             { id: 3, email: 'user3@example.com', username: 'user3', password: 'password3' },
         ],
         currentUser: null,
+        userProfileImage: '',
         movies: [
             { id: 1, title: "Inception", image:'../assets/Inception.jpg' },
             { id: 2, title: "Interstellar", image:'../assets/insterstellar.jpg' },

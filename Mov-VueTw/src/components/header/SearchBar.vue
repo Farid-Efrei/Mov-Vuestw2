@@ -113,7 +113,7 @@
 <script>
 import requete from '../../service/api'
 import { useFacticeUserStore } from '@/stores/facticeUserStore'
-import { computed } from 'vue'
+
 
 export default {
   data() {
@@ -127,17 +127,29 @@ export default {
 
     }
   },
-  setup() {
-    const userStore = useFacticeUserStore();
-    const isAuthenticated = computed(() => userStore.currentUser !== null);
-    const userProfilePicture = computed(() => userStore.userProfilePicture || '../../assets/Goku-Dragon.webp');
 
-    return {
-      isAuthenticated,
-      userProfilePicture,
-      userStore,
-    };
+  computed: {
+    userStore() {
+      return useFacticeUserStore();
+    },
+    isAuthenticated() {
+      return this.userStore.currentUser !== null;
+    },
+    userProfilePicture() {
+      return this.userStore.userProfilePicture || ('../../assets/Goku-Dragon.webp');
+    },
   },
+  // setup() {
+  //   const userStore = useFacticeUserStore();
+  //   const isAuthenticated = computed(() => userStore.currentUser !== null);
+  //   const userProfilePicture = computed(() => userStore.userProfilePicture || '../../assets/Goku-Dragon.webp');
+
+  //   return {
+  //     isAuthenticated,
+  //     userProfilePicture,
+  //     userStore,
+  //   };
+  // },
 
   methods: {
     // pour optimiser les perf en ne déclenchant la rech que lorsque l'user a terminé de saisir (réduit dc le nb de req ou traitements inutiles), on utilise le débouncing search.(en mettant un tps avant de rech pr éviter les rech à cq saisie).
