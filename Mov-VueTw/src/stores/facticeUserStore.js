@@ -72,10 +72,20 @@ export const useFacticeUserStore = defineStore('facticeUser', {
         }
     },
     actions: {
+        //user connecté depuis le stockage de session:
+        loadSession(){
+            const user = sessionStorage.getItem('currentUser');
+            if (user) {
+                this.currentUser = JSON.parse(user);
+            }
+        },
+
         async login(credentials) {
             const user = this.users.find(user => user.email === credentials.email && user.password === credentials.password);
             if (user) {
                 this.currentUser = user;
+                //en utilisant le session storage mais facultatif:
+                sessionStorage.setItem('currentUser', JSON.stringify(user));
                 return true;
             } else {
                 throw new Error('Credentials invalides');
@@ -86,6 +96,7 @@ export const useFacticeUserStore = defineStore('facticeUser', {
             const newUser = { id, ...credentials };
             this.users.push(newUser);
             this.currentUser = newUser;
+            sessionStorage.setItem('currentUser', JSON.stringify(newUser));
         },
 
         async fetchProfile() {
@@ -94,14 +105,16 @@ export const useFacticeUserStore = defineStore('facticeUser', {
         async updateProfile(profileData) {
             if (this.currentUser) {
                 this.currentUser = { ...this.currentUser, ...profileData };
+                sessionStorage.setItem('currentUser', JSON.stringify(this.currentUser));
             }
         },
         async deleteAccount() {
             this.users = this.users.filter(user => user.id !== this.currentUser?.id);
             this.logout();
         },
-        logout() {
+        async logout() {
             this.currentUser = null;
+            sessionStorage.removeItem('currentUser');
         },
         async fetchFavorites() {
             // Pas besoin d'appel HTTP, les données factices sont déjà dans le state

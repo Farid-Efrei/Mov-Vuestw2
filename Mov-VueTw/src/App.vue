@@ -10,12 +10,17 @@
     </div>
 </template>
 <script >
+import { useFacticeUserStore } from './stores/facticeUserStore';
 import NavBar from './components/header/navBar.vue'
 import SearchBar from './components/header/SearchBar.vue';
 export default {
     components:{
         NavBar,
         SearchBar
+    },
+    created(){
+        const userStore = useFacticeUserStore();
+        userStore.loadSession();
     }
 }
 

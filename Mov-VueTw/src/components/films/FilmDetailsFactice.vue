@@ -4,21 +4,21 @@
       <img :src="movie.image" :alt="movie.title" class="w-full h-auto">
       <h2 class="text-xl font-semibold text-orange-300">Commentaires :</h2>
       <ul class="list-disc pl-5">
-        <li v-for="comment in movieCommentsWithAuthors" :key="comment.id" class="mt-2 text-lg">"{{ comment.content }}" de {{ comment.author }}</li>
+        <li v-for="comment in movieCommentsWithAuthors" :key="comment.id" class="mt-2 text-lg">"{{ comment.content }}" de <span class="text-yellow-300">{{ comment.author }}</span></li>
       </ul>
       <h2 class="text-xl font-semibold text-orange-300" >Notes : </h2>
       <ul class="list-disc pl-5">
-        <li v-for="rating in movieRatings" :key="rating.id" class="mt-2 text-lg">{{ rating.rating }}/5 étoiles</li>
+        <li v-for="rating in movieRatingsWithAuthors" :key="rating.id" class="mt-2 text-lg">{{ rating.rating }}/5 étoiles venant de <span class="text-yellow-300">{{ rating.author }}</span></li>
       </ul>
 
     <div v-if="isLoggedIn" class="mt-6 space-y-4">
       <form @submit.prevent="addNewComment" class="flex flex-col space-y-2">
-        <input v-model="newComment" placeholder="Ajouter un commentaire" class="p-2 border rounded">
+        <input v-model="newComment" placeholder="Ajouter un commentaire" class="p-2 border rounded text-black">
         <button type="submit" class="p-2 bg-blue-500 text-white rounded">Ajouter un Commentaire</button>
       </form>
       
       <form @submit.prevent="addNewRating" class="flex flex-col space-y-2">
-        <input v-model.number="newRating" type="number" min="1" max="5" placeholder="Noter (1-5)" class="p-2 border rounded">
+        <input v-model.number="newRating" type="number" min="1" max="5" placeholder="Noter (1-5)" class="p-2 border rounded text-black">
         <button type="submit" class="p-2 bg-blue-500 text-white rounded">Ajouter une Note</button>
       </form>
       
@@ -60,6 +60,15 @@
       movieRatings() {
         const userStore = useFacticeUserStore();
         return userStore.ratings.filter(rating => rating.movieId === parseInt(this.$route.params.id));
+      },
+      movieRatingsWithAuthors(){
+        const userStore = useFacticeUserStore();
+        return userStore.ratings.filter(rating => rating.movieId === parseInt(this.$route.params.id))
+        .map(rating => {
+          const user = userStore.users.find(user => user.id === rating.userId);
+          return {...rating, author: user ? user.username : 'Inconnu'};
+        });
+
       },
       isLoggedIn() {
         const userStore = useFacticeUserStore();

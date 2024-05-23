@@ -67,17 +67,23 @@
       </ul>
     </div>
 
-    <div class="relative">
+    <div class="relative flex items-center">
 
-      
+            
       <img
       src="../../assets/Goku-Dragon.webp"
       alt="avatar de profil"
       class="size-16 rounded-full mr-5 ml-12 cursor-pointer"
       @click="toggleMenu"
       />
+<!-- gestion de l'état de connexion avec petite bille verte pour co et rouge pour déco -->
+      <span class="w-3 h-3 rounded-full absolute right-0 mr-2 mt-10 animate-pulse"
+      :class="{'bg-green-500':- isAuthenticated, 'bg-red-500': !isAuthenticated}"
+      > 
+      </span>
+    </div>
       <div v-if="showMenu"
-      class="absolute right-0 bg-white rounded shadow-lg py-2 w-48"
+      class="absolute right-0 bg-white rounded shadow-lg py-2 w-48 mt-16"
       >
         <div v-if="isAuthenticated">
           <router-link to="/profile"
@@ -101,7 +107,7 @@
 
       </div>
     </div>
-  </div>
+  
 </template>
 
 <script>
@@ -123,12 +129,13 @@ export default {
   },
   setup() {
     const userStore = useFacticeUserStore();
-    const isAuthenticated = computed(() => userStore.isAuthenticated);
+    const isAuthenticated = computed(() => userStore.currentUser !== null);
     const userProfilePicture = computed(() => userStore.userProfilePicture || '../../assets/Goku-Dragon.webp');
 
     return {
       isAuthenticated,
-      userProfilePicture
+      userProfilePicture,
+      userStore,
     };
   },
 
@@ -204,10 +211,10 @@ export default {
     logout(){
       const userStore = useFacticeUserStore();
       userStore.logout();
-      this.$route.push({name:'home'})
-    }
-  }
-}
+      this.$router.push({name:'home'});
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped></style>
