@@ -13,6 +13,7 @@
                 <input type="email" class=" mt-1 appearance-none border rounded-md w-full py-2 px-3 text-gray-700 leading-tight sm:text-sm focus:border-indigo-500 focus:ring-indigo-500  "
                 placeholder="Email" required
                 v-model="email">
+                {{ email }}
             </div>
             <div class="mb-6">
                 <!-- <input type="text" class="text-black"
@@ -23,10 +24,11 @@
                  </label>
                 <input type="password" required class="text-black mt-1 shadow appearance-none border rounded-md w-full py-2 px-3 leading-tight sm:text-sm"
                 placeholder="Password" v-model="password">
+                {{ password }}
             </div>
             <div class="flex items-center justify-center">
                 <button 
-                @submit="register"
+               type="submit"
                 class="flex  justify-center border border-transparent bg-indigo-600 hover:bg-blue-700 font-semibold py-2 px-4 w-full rounded-md focus:ring-offset-2">
                 Valider
                 </button>
@@ -43,7 +45,7 @@
     </div>
 </template>
 <script>
-import {useFacticeUserStore} from '@/stores/facticeUserStore';
+import { useFacticeUserStore } from '@/stores/facticeUserStore';
 
 export default {
     data() {
@@ -63,7 +65,7 @@ export default {
                     //username: this.username,
                     password: this.password
                 });
-                this.$route.push({name: 'profile'})
+                this.$router.push({name: 'profile'})
                 console.log("ok");
             } catch (error) {
                 alert('Inscription échouée')

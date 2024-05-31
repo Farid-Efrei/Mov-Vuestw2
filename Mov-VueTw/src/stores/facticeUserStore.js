@@ -99,6 +99,17 @@ export const useFacticeUserStore = defineStore('facticeUser', {
             this.currentUser = newUser;
             sessionStorage.setItem('currentUser', JSON.stringify(newUser));
         },
+        async forgotPassword(email){
+            const user = this.users.find(user => user.email === email);
+            if(user){
+                //alert (`Un email de réinitialisation a été envoyé à ${email}.`)
+                console.log(`Un email de réinitialisation a été envoyé à ${email}.`);
+                //Simuler l'envoi d'un mail.
+                return true;
+            } else{
+                throw new Error('Aucun compte associé à cet email');
+            }
+        },
 
         async fetchProfile() {
             // Pas besoin d'appel HTTP, les données factices sont déjà dans le state
