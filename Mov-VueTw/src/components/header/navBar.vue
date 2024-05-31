@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import requete from '@/service/api';
+
 export default{
     data() {
         return {
@@ -24,22 +24,6 @@ export default{
 
 
 methods: {
-    async popKorMovie(){
-            try {
-                //const response = await requete.get('movie/popular');
-                // const response = await requete.get('movie/top_rated');
-                // const response = await requete.get('movie/upcoming');
-                const response = await requete.get('/discover/movie',{ params: {
-                    sort_by: 'release_date.desc',
-                    language: 'ko', // Langue coréenne
-                    region: 'KR' // Région Corée du Sud 
-        }
-            });
-                this.films = response.data.results;
-            } catch (error) {
-                console.error('echec de la récupération de la liste des films populaires ', error);
-            }
-        },
     handleClick(){
         // Annuler le délai si déjà défini
         if (this.clickTimeout){
@@ -62,9 +46,7 @@ methods: {
     
     
 },
-mounted() {
-    this.popKorMovie();
-},
+
 }
 
 </script>

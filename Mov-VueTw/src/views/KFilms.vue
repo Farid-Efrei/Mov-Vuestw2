@@ -28,7 +28,7 @@ export default {
     },
     props: {
         magicRoute : String,
-        koreanMovies : [],
+        
     },
     data() {
         return {
@@ -46,9 +46,7 @@ export default {
     methods: {
         async popKorMovie(){
             try {
-                //const response = await requete.get('movie/popular');
-                // const response = await requete.get('movie/top_rated');
-                // const response = await requete.get('movie/upcoming');
+               
                 const response = await requete.get('/discover/movie',{ params: {
                     // sort_by: 'release_date.desc',
                     // language: 'ko', // Langue coréenne
@@ -75,23 +73,7 @@ export default {
         }
 
     },
-    computed: {
-        // magicRoute() {
-        //     return this.$route.meta.category;
-        // },
-
-        // magicRoute() {
-
-        //     if (this.$route.name === 'films') {
-        //         return 'films';
-                
-        //     } else {
-        //         return 'series';
-        //     }
-        // }
-
-  
-    }
+   
 }
 </script>
 <style lang="">
