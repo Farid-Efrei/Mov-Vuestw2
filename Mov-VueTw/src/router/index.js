@@ -10,6 +10,7 @@ import UserProfile from '@/views/UserProfile.vue'
 import { authGuard } from '../service/guards/authGuard'
 import FilmDetailsFactice from '@/components/films/FilmDetailsFactice.vue'
 import ForgotPassword from '@/views/ForgotPassword.vue'
+import KFilms from '@/views/KFilms.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +35,8 @@ const router = createRouter({
       name: 'forgotPassword',
       component: ForgotPassword,
       meta: { transitionName: 'fade' }
-    }
+    },
+    {path:'/k-films', name: 'k-films', component: KFilms,}
     // { path: '/:magicRoute/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice, meta: { requiresAuth: false } }
 
     // {
