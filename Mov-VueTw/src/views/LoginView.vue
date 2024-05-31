@@ -33,7 +33,7 @@
             <div class="flex justify-between">
 
     
-            <router-link to="/forgot-password" class="hover:text-orange-400" >
+            <router-link to=/forgot-password class="hover:text-orange-400" >
                 <!-- // TODO:composant mot de passe oublié à gérer !!! -->
                 <p class="text-sm my-4"> Mot de passe oublié ? </p>
             </router-link>

@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-center items-center min-h-screen">
         <form @submit.prevent="submitEmail" 
-        class="w-full max-w-lg p-8 space-y-6 rounded-lg shadow-lg border border-green-200">
+        class="w-full max-w-lg p-8 space-y-6 rounded-lg shadow-lg border border-green-200 bg-green-800">
             <h2 class="text-2xl font-bold text-center text-orange-400">
                 Réinitialisation du mot de passe :
             </h2>
@@ -40,7 +40,8 @@ export default {
         return {
             email:'',
             message:'',
-            isError:false
+            isError:false,
+            countdown: 5 // Gère le décompte pour la redirection.
         };
     },
     methods: {
@@ -50,17 +51,36 @@ export default {
                 await userStore.forgotPassword(this.email);
                 this.message = "Un email de réinitialisation a été envoyé. Veuillez vérifier votre boîte de réception.";
                 this.isError = false;
+                this.startCountdown();
+                // this.$router.push('/login')
             } catch (error) {
                 this.message = error.message;
                 this.isError = true;
             }
+        },
+
+        startCountdown(){
+            const intervalId = setInterval(() => {
+                if(this.countdown > 0) {
+                    this.countdown -= 1;
+                    this.message = "un email de réinitialisation a été envoyé. Redictection dans " + this.countdown + " secondes. ";
+                } else {
+                    clearInterval(intervalId);
+                    this.$router.push({name : 'login'});
+                }
+            }, 1000);
         }
     },
 
 }
 </script>
 
-
-<style lang="">
-
+<style scoped>
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
 </style>
+
