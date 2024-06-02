@@ -1,5 +1,5 @@
 <template>
-  <div class="container flex">
+  <div class="container mx-auto flex">
     <div class="flex justify-between items-center py-auto">
       <div>
         <img
@@ -22,7 +22,7 @@
       </div>
       <ul
         :class="{ hidden: !menuOpen, flex: menuOpen }"
-        class="md:flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 md:mt-0"
+        class="md:flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6"
       >
         <li>
           <router-link
@@ -54,11 +54,16 @@
         </li>
       </ul>
     </div>
+    <SearchBar class="" />
   </div>
 </template>
 
 <script>
+import SearchBar from './SearchBar.vue'
 export default {
+  components: {
+    SearchBar
+  },
   data() {
     return {
       clickTimeout: null,

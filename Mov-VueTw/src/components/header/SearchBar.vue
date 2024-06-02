@@ -1,19 +1,15 @@
 <template>
-
-  <div class="mt-5 size-fit flex relative z-50"
-  @click.stop>
+  <div class="mt-5 size-fit flex relative max-w-lg mx-auto w-full z-50" @click.stop>
     <input
       type="text"
       placeholder="Rechercher un Film, une série..."
-      class="rounded-full bg-green-800 focus:shadow w-96 pl-7"
+      class="rounded-full bg-green-800 focus:shadow pl-10 py-2 pr-2 w-full mr-3"
       @input="debouncingSearch"
       v-model="searchTerm"
-
       @blur="handleBlur"
-      
     />
 
-    <div class="absolute top-5">
+    <div class="absolute top-0 left-3 bottom-0 flex items-center">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -30,35 +26,28 @@
       </svg>
     </div>
 
-
-    <div 
-    class="absolute mt-16 ml-3 bg-green-800 rounded w-9/12"
-    v-if="showSearchResults"
-    @mousedown="prevent"
+    <div
+      class="absolute mt-16 ml-3 bg-green-800 rounded w-9/12"
+      v-if="showSearchResults"
+      @mousedown="prevent"
     >
-      <ul class="mt-3" v-if="searchResult.length !==0">
-
+      <ul class="mt-3" v-if="searchResult.length !== 0">
         <li
           v-for="(multi, index) in searchResult"
           :key="index"
           class="flex items-center border-b-2 border-yellow-300 p-1"
         >
-
-        <!-- <RouterLink :to="{name:'filmDetails', params: {id:multi.id, magicRoute:multi.media_type}}"> -->
-        <router-link :to="getDetailsRoute(multi)" class="">
-          
-          <img
-          :src="videoImages(multi.poster_path)"
-          :alt="multi.title || multi.original_name"
-          class="w-28 p-1"
-
-          />
-          <span class="font-serif text-lg text-center">
-            {{ multi.title || multi.original_name }}
-          </span>
-
-        </router-link>
-
+          <!-- <RouterLink :to="{name:'filmDetails', params: {id:multi.id, magicRoute:multi.media_type}}"> -->
+          <router-link :to="getDetailsRoute(multi)" class="">
+            <img
+              :src="videoImages(multi.poster_path)"
+              :alt="multi.title || multi.original_name"
+              class="w-28 p-1"
+            />
+            <span class="font-serif text-lg text-center">
+              {{ multi.title || multi.original_name }}
+            </span>
+          </router-link>
         </li>
       </ul>
       <!-- si pas pas de résultat : -->
@@ -68,76 +57,75 @@
     </div>
 
     <div class="relative flex items-center">
-
-            
       <img
-      src="../../assets/Goku-Dragon.webp"
-      alt="avatar de profil"
-      class="size-16 rounded-full mr-5 ml-12 cursor-pointer"
-      @click="toggleMenu"
+        src="../../assets/Goku-Dragon.webp"
+        alt="avatar de profil"
+        class="size-16 rounded-full mr-5 scursor-pointer"
+        @click="toggleMenu"
       />
-<!-- gestion de l'état de connexion avec petite bille verte pour co et rouge pour déco -->
-      <span class="w-3 h-3 rounded-full absolute right-0 mr-2 mt-10 animate-pulse"
-      :class="{'bg-green-500':- isAuthenticated, 'bg-red-500': !isAuthenticated}"
-      > 
+      <!-- gestion de l'état de connexion avec petite bille verte pour co et rouge pour déco -->
+      <span
+        class="w-3 h-3 rounded-full absolute right-0 mr-2 mt-10 animate-pulse"
+        :class="{ 'bg-green-500': -isAuthenticated, 'bg-red-500': !isAuthenticated }"
+      >
       </span>
     </div>
-      <div v-if="showMenu"
-      class="absolute right-0 bg-white rounded shadow-lg py-2 w-48 mt-16"
-      >
-        <div v-if="isAuthenticated">
-          <router-link to="/profile"
-          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+    <div v-if="showMenu" class="absolute right-0 bg-white rounded shadow-lg py-2 w-48 mt-16">
+      <div v-if="isAuthenticated">
+        <router-link
+          to="/profile"
+          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+        >
           <span class="flex items-center">
             <span class="mr-2">Profil</span>
             <span class="w-2 h-2 bg-green-500 rounded-full"></span>
           </span>
         </router-link>
-        <button @click="logout"
-        class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100">
+        <button
+          @click="logout"
+          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+        >
           Déconnexion
         </button>
-        </div>
-        <div v-else>
-          <router-link to="/login"
-          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100" >
-            Connexion
-          </router-link>
-        </div>
-
+      </div>
+      <div v-else>
+        <router-link
+          to="/login"
+          class="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
+        >
+          Connexion
+        </router-link>
       </div>
     </div>
-  
+  </div>
 </template>
 
 <script>
 import requete from '../../service/api'
 import { useFacticeUserStore } from '@/stores/facticeUserStore'
 
-
 export default {
   data() {
     return {
       searchResult: [],
       noResultFound: false,
-      searchTerm: "",
+      searchTerm: '',
 
-      showSearchResults:false,
-      showMenu: false,
-
+      showSearchResults: false,
+      showMenu: false
     }
   },
 
   computed: {
     userStore() {
-      return useFacticeUserStore();
+      return useFacticeUserStore()
     },
     isAuthenticated() {
-      return this.userStore.currentUser !== null;
+      return this.userStore.currentUser !== null
     },
     userProfilePicture() {
-      return this.userStore.userProfilePicture || ('../../assets/Goku-Dragon.webp');
-    },
+      return this.userStore.userProfilePicture || '../../assets/Goku-Dragon.webp'
+    }
   },
   // setup() {
   //   const userStore = useFacticeUserStore();
@@ -201,32 +189,30 @@ export default {
       }, 300)
     },
     getDetailsRoute(multi) {
-      const mediaType = multi.media_type;
-      const id = multi.id;
+      const mediaType = multi.media_type
+      const id = multi.id
       console.log(mediaType)
 
       if (mediaType === 'tv') {
-        return {name: 'filmDetails', params: {magicRoute: 'series', id } }
-        } else if (mediaType === 'movie') {
-        return {name:'filmDetails', params: {magicRoute:'films', id}}
-        } else {
+        return { name: 'filmDetails', params: { magicRoute: 'series', id } }
+      } else if (mediaType === 'movie') {
+        return { name: 'filmDetails', params: { magicRoute: 'films', id } }
+      } else {
         // pour gérer les futurs autres videos ou documentaires
-        return {name:'filmDetails', params:{magicRoute:'other', id}}
+        return { name: 'filmDetails', params: { magicRoute: 'other', id } }
       }
-      
-
     },
 
-    toggleMenu(){
-      this.showMenu = !this.showMenu;
+    toggleMenu() {
+      this.showMenu = !this.showMenu
     },
-    logout(){
-      const userStore = useFacticeUserStore();
-      userStore.logout();
-      this.$router.push({name:'home'});
-    },
-  },
-};
+    logout() {
+      const userStore = useFacticeUserStore()
+      userStore.logout()
+      this.$router.push({ name: 'home' })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped></style>
