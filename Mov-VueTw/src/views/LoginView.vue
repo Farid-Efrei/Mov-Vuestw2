@@ -55,7 +55,8 @@
 </template>
 
 <script>
-import {useFacticeUserStore} from '@/stores/facticeUserStore'
+// import {useFacticeUserStore} from '@/stores/facticeUserStore'
+import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 
 export default {
@@ -67,25 +68,42 @@ export default {
         };
     },
     methods : {
-        async login() {
-            const userStore = useFacticeUserStore();
+        // async login() {
+        //     const userStore = useFacticeUserStore();
+        //     try {
+        //         await userStore.login({
+        //             email : this.email,
+        //             password : this.password
+        //         });
+        //         this.$router.push({name:'profile'});
+        //         console.log(this.email, this.password);
+        //     } catch (error) {
+        //         alert('Identifiants de connexion invalides');
+        //         this.error = error.message;
+        //     }
+        // }
+        async login(){
+            const userStore = useUserStore();
             try {
                 await userStore.login({
-                    email : this.email,
-                    password : this.password
+                    email: this.email,
+                    password: this.password
                 });
-                this.$router.push({name:'profile'});
-                console.log(this.email, this.password);
+                this.$router.push({name:"profile"});
+                console.log("mail et pass : " + this.email, this.password);
             } catch (error) {
-                alert('Identifiants de connexion invalides');
+                alert('Identfiants de connexion invalides');
                 this.error = error.message;
             }
         }
     },
     setup(){
-        const userStore = useFacticeUserStore();
+        // const userStore = useFacticeUserStore();
+        // const router = useRouter();
+        // return{userStore, router}
+        const userStore = useUserStore();
         const router = useRouter();
-        return{userStore, router}
+        return  {userStore, router}
     }
 }
 </script>

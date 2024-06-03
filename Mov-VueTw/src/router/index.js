@@ -8,7 +8,7 @@ import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import UserProfile from '@/views/UserProfile.vue'
 import { authGuard } from '../service/guards/authGuard'
-import FilmDetailsFactice from '@/components/films/FilmDetailsFactice.vue'
+// import FilmDetailsFactice from '@/components/films/FilmDetailsFactice.vue'
 import ForgotPassword from '@/views/ForgotPassword.vue'
 import KFilms from '@/views/KFilms.vue'
 
@@ -29,14 +29,14 @@ const router = createRouter({
     { path: '/login', name: 'login', component: LoginView, meta: { transitionName: 'fade' } },
     { path: '/register', name: 'register', component: RegisterView },
     { path: '/profile', name: 'profile', component: UserProfile, meta: { requiresAuth: true } },
-    { path: '/factice/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice },
+    // { path: '/factice/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice },
     {
       path: '/forgot-password',
       name: 'forgotPassword',
       component: ForgotPassword,
       meta: { transitionName: 'fade' }
     },
-    {path:'/k-films', name: 'k-films', component: KFilms,}
+    { path: '/k-films', name: 'k-films', component: KFilms }
     // { path: '/:magicRoute/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice, meta: { requiresAuth: false } }
 
     // {

@@ -1,18 +1,18 @@
 <template>
   <div class="container mx-auto my-10 p-5 bg-yellow-200 rounded-lg shadow-md text-black">
     <div class="flex flex-col items-center">
-      <h1 class="text-2xl font-bold mb-5">Profil Utilisateur de {{ profile.username }}</h1>
+      <h1 class="text-2xl font-bold mb-5">Profil Utilisateur de {{ profile.nom }}</h1>
       <div v-if="profile" class="w-full max-w-3xl bg-green-300 rounded-lg shadow-md p-6">
         <div class="mb-6">
           <h2 class="text-xl font-semibold underline">Informations de base :</h2>
           <p class="mt-2"><strong>Email :</strong> {{ profile.email }}</p>
-          <p class="mt-2"><strong>Username :</strong> {{ profile.username }}</p>
+          <p class="mt-2"><strong>Username :</strong> {{ profile.nom }}</p>
         </div>
 
         <div class="mb-6">
           <h2 class="text-xl font-semibold">Favoris :</h2>
           <ul class="list-disc list-inside mt-2">
-            <li v-for="favorite in favorites" :key="favorite.id">{{ favorite.title }}</li>
+            <li v-for="favorite in favorites" :key="favorite.id">{{ favorite.Video.titre }}</li>
           </ul>
         </div>
 
@@ -101,13 +101,15 @@
   </div>
 </template>
 <script>
-import { useFacticeUserStore } from '@/stores/facticeUserStore'
+import { useUserStore } from '@/stores/user'
+
+// import { useFacticeUserStore } from '@/stores/facticeUserStore'
 
 export default {
   data() {
     return {
       profile: {},
-      favorite: {},
+      favorites: {},
       comments: {},
       ratings: {},
       password: {
@@ -120,44 +122,47 @@ export default {
 
   methods: {
     async updateProfile() {
-      const userStore = useFacticeUserStore()
-      await userStore.updateProfile(this.profile)
+      // const userStore = useFacticeUserStore()
+      // await userStore.updateProfile(this.profile)
     },
     async changePassword() {
       // Pour simuler, pas besoin de réelle action.
       console.log('Password changend', this.password)
     },
     async deleteAccount() {
-      const userStore = useFacticeUserStore()
-      await userStore.deleteAccount()
-      alert('compte supprimé')
-      this.$router.push({ name: 'home' })
+      // const userStore = useFacticeUserStore()
+      // await userStore.deleteAccount()
+      // alert('compte supprimé')
+      // this.$router.push({ name: 'home' })
     },
-    toggleEditProfile(){
-        this.showEditProfile = !this.showEditProfile
+    toggleEditProfile() {
+      this.showEditProfile = !this.showEditProfile
     }
   },
 
   async mounted() {
-    const userStore = useFacticeUserStore()
-    await userStore.fetchProfile()
+    // const userStore = useFacticeUserStore()
+    const userStore = useUserStore()
+    // await userStore.fetchProfile()
     await userStore.fetchFavorites()
-    await userStore.fetchComments() // Passer les paramètres appropriés si nécessaire
-    await userStore.fetchRatings() // Passer les paramètres appropriés si nécessaire
+    // await userStore.fetchComments() // Passer les paramètres appropriés si nécessaire
+    // await userStore.fetchRatings() // Passer les paramètres appropriés si nécessaire
     this.profile = userStore.userProfile
-    this.favorites = userStore.userFavorites
-    this.comments = userStore.movieComments
-    this.ratings = userStore.userRatings
+    console.log('Profil chargé: ' + this.profile)
+    this.favorites = await userStore.fetchFavorites() //
+    console.log('favoris : ', this.favorites)
+    // this.comments = userStore.userComments
+    // this.ratings = userStore.userRatings
   }
 }
 </script>
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-transition: opacity 0.5s;
+  transition: opacity 0.5s;
 }
 .fade-enter,
 .fade-leave-to {
-opacity: 0;
+  opacity: 0;
 }
 </style>
