@@ -66,7 +66,7 @@
       <!-- gestion de l'état de connexion avec petite bille verte pour co et rouge pour déco -->
       <span
         class="w-3 h-3 rounded-full absolute right-0 mr-2 mt-10 animate-pulse"
-        :class="{ 'bg-green-500': -isAuthenticated, 'bg-red-500': !isAuthenticated }"
+        :class="{ 'bg-green-500': isAuthenticated, 'bg-red-500': !isAuthenticated }"
       >
       </span>
     </div>
@@ -101,8 +101,9 @@
 </template>
 
 <script>
+import { useUserStore } from '@/stores/user'
 import requete from '../../service/api'
-import { useFacticeUserStore } from '@/stores/facticeUserStore'
+// import { useFacticeUserStore } from '@/stores/facticeUserStore'
 
 export default {
   data() {
@@ -118,7 +119,8 @@ export default {
 
   computed: {
     userStore() {
-      return useFacticeUserStore()
+      // return useFacticeUserStore()
+      return useUserStore()
     },
     isAuthenticated() {
       return this.userStore.currentUser !== null
@@ -207,8 +209,9 @@ export default {
       this.showMenu = !this.showMenu
     },
     logout() {
-      const userStore = useFacticeUserStore()
-      userStore.logout()
+      // const userStore = useFacticeUserStore()
+      this.userStore.logout()
+      this.showMenu = false // ferme le menu apres deco.
       this.$router.push({ name: 'home' })
     }
   }

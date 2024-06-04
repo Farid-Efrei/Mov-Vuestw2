@@ -12,7 +12,8 @@ export const useUserStore = defineStore('user', {
     comments: [], // une liste des commentaires de l'user.
     ratings: [], // liste des ratings de l'user.
     profile: {}, // profil utilisateur.
-    currentUser: null
+    currentUser: null,
+    isAuthenticated: false
   }),
   // Des fonctions pour obtenir des valeurs dérivées du state:
   getters: {
@@ -58,12 +59,15 @@ export const useUserStore = defineStore('user', {
           console.log('Token:', this.token)
           console.log('User Info:', this.user)
           // Décode le token JWT pour récupérer les informations de l'utilisateur
-          localStorage.setItem('token', this.token) // Stocke le token dans le localStorage
+          this.currentUser = this.user
+          localStorage.setItem('token', this.token)
+          // Stocke le token dans le localStorage
+
           await this.fetchProfile() // Récupère le profil de l'utilisateur
         }
       } catch (error) {
-        console.log('Token:', this.token)
-        console.log('User Info:', this.user)
+        console.log('EchToken:', this.token)
+        console.log('E User Info:', this.user)
         console.error('Echec de la connexion', error.response.data)
 
         console.error('Echec de la connexion', error)
@@ -110,6 +114,7 @@ export const useUserStore = defineStore('user', {
       this.favorites = []
       this.comments = []
       this.ratings = []
+      this.currentUser = null
     },
 
     // ***** GESTION DES FAVORIS : *****
