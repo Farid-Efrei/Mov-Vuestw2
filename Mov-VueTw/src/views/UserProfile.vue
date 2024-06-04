@@ -19,16 +19,18 @@
         <div class="mb-6">
           <h2 class="text-xl font-semibold">Commentaires :</h2>
           <ul class="list-disc list-inside mt-2">
-            <li v-for="comment in userComments" :key="comment.id">
-              {{ comment.content }} sur <strong>{{ comment.movieTitle }}</strong>
+            <li v-for="appreciation in appreciations" :key="appreciation.id">
+              "{{ appreciation.commentaire }}" sur <strong>{{ appreciation.Video.titre }}</strong>
+              <span> le {{ formatDate(appreciation.updatedAt) }}</span>
             </li>
           </ul>
         </div>
         <div class="mb-6">
           <h2 class="text-xl font-semibold">Notes :</h2>
           <ul class="list-disc list-inside mt-2">
-            <li v-for="rating in userRatings" :key="rating.id">
-              {{ rating.rating }} étoiles pour <strong>{{ rating.movieTitle }}</strong>
+            <li v-for="appreciation in appreciations" :key="appreciation.id">
+              {{ appreciation.note }} étoiles pour
+              <strong>{{ appreciation.Video.titre }}</strong>
             </li>
           </ul>
         </div>
@@ -102,6 +104,8 @@
 </template>
 <script>
 import { useUserStore } from '@/stores/user'
+import { format } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 // import { useFacticeUserStore } from '@/stores/facticeUserStore'
 
@@ -110,17 +114,21 @@ export default {
     return {
       profile: {},
       favorites: {},
-      comments: {},
-      ratings: {},
+      // comments: {},
+      // ratings: {},
       password: {
         oldPassword: '',
         newPassword: ''
       },
-      showEditProfile: false
+      showEditProfile: false,
+      appreciations: {}
     }
   },
 
   methods: {
+    formatDate(date) {
+      return format(new Date(date), 'dd/MM/yyyy HH:mm', { locale: fr })
+    },
     async updateProfile() {
       // const userStore = useFacticeUserStore()
       // await userStore.updateProfile(this.profile)
@@ -145,15 +153,28 @@ export default {
     const userStore = useUserStore()
     // await userStore.fetchProfile()
     await userStore.fetchFavorites()
+
+    await userStore.fetchAppreciationsByUser(userStore.user.id)
+
     // await userStore.fetchComments() // Passer les paramètres appropriés si nécessaire
     // await userStore.fetchRatings() // Passer les paramètres appropriés si nécessaire
     this.profile = userStore.userProfile
     console.log('Profil chargé: ' + this.profile)
     this.favorites = await userStore.fetchFavorites() //
     console.log('favoris : ', this.favorites)
-    // this.comments = userStore.userComments
-    // this.ratings = userStore.userRatings
+    this.appreciations = userStore.appreciations
+    // const videoID = this.$route.query.videoId
+    // console.log('VIDEO ID : ' + videoID)
+    // if (videoID) {
+    //   this.comments = await userStore.fetchComments(videoID)
+    //   // this.comments = userStore.userComments
+    // } else {
+    console.log('appreciations : ', this.appreciations)
+    //   console.error('Video ID est indéfini.')
   }
+  // this.comments = await userStore.fetchComments()
+  // this.comments = await userStore.userComments
+  // this.ratings = userStore.userRatings
 }
 </script>
 <style scoped>

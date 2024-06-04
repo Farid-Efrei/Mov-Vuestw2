@@ -127,13 +127,38 @@ export const useUserStore = defineStore('user', {
       }
     },
     // fetchComments: Envoie une req GET pour la liste des comm de l'user pour un film spécifique (movieId):
-    async fetchComments(movieId) {
-      const response = await axios.get(`http://localhost:3000/api/comments?movieId=${movieId}`, {
-        headers: {
-          Authorization: `Bearer ${this.token}`
-        }
-      })
-      this.comments = response.data
+    async fetchComments(Id_Video) {
+      console.log("Fetch des commentaires de l'Id_Video : " + Id_Video)
+      try {
+        const response = await axios.get(`http://localhost:3000/api/appreciations/${Id_Video}`, {
+          headers: {
+            Authorization: `Bearer ${this.token}`
+          }
+        })
+        console.log('Réponse API : ' + response)
+        this.comments = response.data
+        console.log('Commentaires fetchés :', this.comments)
+      } catch (error) {
+        console.error('Erreur en fetchant les comm :', error)
+        this.comments = []
+      }
+    },
+
+    async fetchAppreciationsByUser(userId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/appreciations/utilisateur/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${this.token}`
+            }
+          }
+        )
+        this.appreciations = response.data
+      } catch (error) {
+        console.error('Erreur lors de la récup des appréciations par utilisateur :', error)
+        this.appreciations = []
+      }
     },
     // Envoie une req POST pour ajouter un film aux favoris de l'user:
     async addFavorite(movieId) {
