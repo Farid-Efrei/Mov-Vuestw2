@@ -11,7 +11,7 @@
             type="text"
             placeholder="Votre commentaire..."
             v-model="newComment"
-            class="flex-1 mr-2 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            class="flex-1 mr-2 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 text-black"
           />
           <select
             name=""
@@ -89,35 +89,37 @@ export default {
   },
   data() {
     return {
-      newComment: ref(''),
-      newRating: ref(''),
-      comments: ref([
-        // { id: 1, text: 'Un excellent film, à voir absolument !', author: 'John Doe' },
-        // { id: 2, text: "J'ai adoré les performances des acteurs.", author: null }
-      ]),
-      ratings: ref([
-        // { id: 1, value: 5 },
-        // { id: 2, value: 4 },
-        // { id: 3, value: 3 }
-      ])
+      newComment: '',
+      newRating: '',
+      comments: [
+        { id: 1, text: 'Un excellent film, à voir absolument !', author: 'John Doe' },
+        { id: 2, text: "J'ai adoré les performances des acteurs.", author: null }
+      ],
+      ratings: [
+        { id: 1, value: 5 },
+        { id: 2, value: 4 },
+        { id: 3, value: 3 }
+      ]
     }
   },
   methods: {
     addCommentOrRating() {
-      if (n < this.newComment.value) {
-        this.comments.value.push({
-          id: this.comments.value.length + 1,
-          text: this.newComment.value,
+      if (this.newComment) {
+        this.comments.push({
+          id: this.comments.length + 1,
+          text: this.newComment,
           author: null
         })
-        this.newComment.value = ''
+        this.newComment = ''
+        console.log(this.comments)
       }
-      if (this.newRating.value) {
-        this.ratings.value.push({
-          id: this.ratings.value.length + 1,
-          value: this.newRating.value
+      if (this.newRating) {
+        this.ratings.push({
+          id: this.ratings.length + 1,
+          value: this.newRating
         })
-        this.newRating.value = ''
+        this.newRating = ''
+        console.log(this.newRating)
       }
     }
   }

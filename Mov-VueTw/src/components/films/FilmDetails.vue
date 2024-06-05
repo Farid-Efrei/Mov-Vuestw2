@@ -140,7 +140,7 @@
             </a>
           </div>
         </div>
-        <CommentsAndRatingsPerp />
+        <CommentsAndRatingsPerp :isAuthenticated="true" />
       </div>
     </div>
     <CastFilm :casting="creditsData.cast" />
