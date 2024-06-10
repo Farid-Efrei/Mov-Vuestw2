@@ -45,7 +45,8 @@
     </div>
 </template>
 <script>
-import { useFacticeUserStore } from '@/stores/facticeUserStore';
+// import { useFacticeUserStore } from '@/stores/facticeUserStore';
+import { useUserStore } from '@/stores/user';
 
 export default {
     data() {
@@ -58,7 +59,8 @@ export default {
     },    
     methods : {
         async register() {
-            const userStore = useFacticeUserStore();
+            //const userStore = useFacticeUserStore();
+            const userStore = useUserStore();
             try {
                 await userStore.register({
                     email: this.email,

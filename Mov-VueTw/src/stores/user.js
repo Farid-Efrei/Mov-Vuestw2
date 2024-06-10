@@ -75,10 +75,10 @@ export const useUserStore = defineStore('user', {
     },
     // register: envoie une Req d'INSCRIPTION les "credentials"(nom user, mail + mdp) au back pour créer un nv compte puis obtient et décode le token + récupère le profile User:
     async register(credentials) {
-      const response = await axios.post('http://localhost:3000/register', credentials)
+      const response = await axios.post('http://localhost:3000/api/utilisateurs/register', credentials)
       this.token = response.data.token
       this.user = jwtDecode(this.token)
-      await this.fetchProfile()
+      // await this.fetchProfile()
     },
     //Req GET pour récupérer le profil User en utilisant le token pour l'authentication:
     async fetchProfile() {

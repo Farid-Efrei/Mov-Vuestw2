@@ -140,7 +140,7 @@
             </a>
           </div>
         </div>
-        <CommentsAndRatingsPerp :isAuthenticated="true" />
+        <CommentsAndRatingsPerp3 :video-id="videoId" />
       </div>
     </div>
     <CastFilm :casting="creditsData.cast" />
@@ -160,12 +160,12 @@
 import CastFilm from '@/components/films/CastFilm.vue'
 import ImagesFilm from '@/components/films/ImagesFilm.vue'
 import requete from '../../service/api'
-import getDatas from '../../service/getDatas'
+
 // eslint-disable-next-line no-undef
 import Toktok from '../../service/tok'
 //const toktok = process.env.TMDB_API_TOKTOK;
 import ModalMedia from '@/components/items/ModalMedia.vue'
-import CommentsAndRatingsPerp from '@/components/films/CommentsAndRatingsPerp.vue'
+import CommentsAndRatingsPerp3 from '@/components/films/CommentsAndRatingsPerp3.vue'
 
 export default {
   name: 'filmDetails',
@@ -173,7 +173,7 @@ export default {
     CastFilm,
     ImagesFilm,
     ModalMedia,
-    CommentsAndRatingsPerp
+    CommentsAndRatingsPerp3
   },
   data() {
     return {
@@ -187,7 +187,8 @@ export default {
       showModal: false,
       selectedMediaSrc: '',
       selectedMediaAlt: '',
-      selectedMediaType: ''
+      selectedMediaType: '',
+      // videoId: '',
     }
   },
   mounted() {
