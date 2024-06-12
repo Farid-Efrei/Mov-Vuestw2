@@ -42,6 +42,7 @@
         <h3 class="text-lg font-semibold mb-2">Gérer vos Favoris :</h3>
         <button
           @click="toggleFavorite"
+          :class="isFavorite ? 'bg-yellow-400' : 'bg-green-600'"
           class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-yellow-400 transition-colors duration-300 flex items-center"
         >
           <svg
@@ -155,6 +156,7 @@ export default {
       newComment: '',
       newRating: 0,
       editingAppreciation: null
+      // isFavorite: false
     }
   },
   computed: {
@@ -173,9 +175,8 @@ export default {
     ratings() {
       return this.movieStore.appreciations.filter((app) => app.note)
     },
-
     isFavorite() {
-      return this.userStore.userFavorites.some((fav) => fav.Id_Video === this.videoId)
+      return this.userStore.userFavorites.some((fav) => fav.Id_Video === this.$route.params.id)
     }
   },
   methods: {
@@ -188,6 +189,10 @@ export default {
         })
         this.comments = response.data.comments
         this.ratings = response.data.ratings
+
+        // Vérif si la vidéo est en favoris:
+        this.isFavorite = this.userStore.userFavorites.some((fav) => fav.Id_Video === videoId)
+        console.log('isFAVO : ' + this.isFavorite)
       } catch (error) {
         console.error('Erreur lors de la récupération des commentaires et des notes :', error)
       }
@@ -208,8 +213,10 @@ export default {
     async toggleFavorite() {
       console.log('UserStore:', this.userStore.user) // Vérifiez l'utilisateur ici
       console.log('Video ID:', this.$route.params.id) // Vérifiez l'ID de la vidéo ici
-      return await this.userStore.toggleFavorite3(this.$route.params.id, this.magicRoute)
+      await this.userStore.toggleFavorite3(this.$route.params.id, this.magicRoute)
+      this.isFavorite = !this.isFavorite //MAJ de l'état local des fav.
     },
+
     editComment(comment) {
       this.editingAppreciation = comment
       this.newComment = comment.commentaire

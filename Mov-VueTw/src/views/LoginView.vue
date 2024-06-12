@@ -89,11 +89,11 @@ export default {
                     email: this.email,
                     password: this.password
                 });
-                this.$router.push({name:"profile"});
                 console.log("mail et pass : " + this.email, this.password);
+                this.$router.push({name:"profile"});
             } catch (error) {
-                alert('Identfiants de connexion invalides');
-                this.error = error.message;
+                console.error('Identfiants de connexion invalides',error);
+                this.error = error.response?.data?.message || error.message || 'Echec de la connexion'
             }
         }
     },

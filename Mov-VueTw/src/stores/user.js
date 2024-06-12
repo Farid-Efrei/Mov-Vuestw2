@@ -9,11 +9,13 @@ export const useUserStore = defineStore('user', {
     user: null, // stocke les infos de l'user actuellement connecté.
     token: null, // stocke le JWT de l'user co pour les req authentifiées.
     favorites: [], // liste des videos favoris de l'user.
+    userFavorites: [], //
     comments: [], // une liste des commentaires de l'user.
     ratings: [], // liste des ratings de l'user.
     profile: {}, // profil utilisateur.
     currentUser: null,
-    isAuthenticated: false
+    // isAuthenticated: false
+    isAuthChecked: false //Ajouter un indicateur pour vérif si l'auth a été vérifiée.
   }),
   // Des fonctions pour obtenir des valeurs dérivées du state:
   getters: {
@@ -53,27 +55,52 @@ export const useUserStore = defineStore('user', {
           'http://localhost:3000/api/utilisateurs/login',
           credentials
         )
-        this.token = response.data.token
-        if (this.token) {
-          this.user = jwtDecode(this.token)
-          console.log('Token:', this.token)
-          console.log('User Info:', this.user)
-          // Décode le token JWT pour récupérer les informations de l'utilisateur
-          this.currentUser = this.user
-          // localStorage.setItem('token', this.token)
-          localStorage.setItem('token', this.token)
-          // Stocke le token dans le localStorage
+        console.log('DATA : ', response.data)
+        if (response.data) {
+          if (response.data.token) {
+            this.token = response.data.token
+            this.user = jwtDecode(this.token)
+            console.log('Token:', this.token)
+            console.log('User Info:', this.user)
+            console.log(this.isAuthenticated)
+            // Décode le token JWT pour récupérer les informations de l'utilisateur
+            this.currentUser = this.user
+            // localStorage.setItem('token', this.token)
+            localStorage.setItem('token', this.token)
+            // Stocke le token dans le localStorage
 
-          await this.fetchProfile() // Récupère le profil de l'utilisateur
+            await this.fetchProfile()
+            await this.fetchUserFavorites()
+            // Récupère le profil de l'utilisateur
+            // this.router.push('/profile')
+          } else {
+            console.error('Pas de token trouvé dans la réponse')
+            throw new Error('Echec de la Connexion')
+          }
+        } else {
+          console.error('Réponse API invalide')
+          throw new Error('Echec de la Connexion')
         }
       } catch (error) {
         console.log('EchToken:', this.token)
         console.log('E User Info:', this.user)
-        console.error('Echec de la connexion', error.response.data)
+        console.error('Erreur de la connexion', error.response.data)
 
         console.error('Echec de la connexion', error)
+        throw error
       }
     },
+    async checkAuthStatus() {
+      if (!this.isAuthChecked) {
+        if (this.token) {
+          this.user = jwtDecode(this.token)
+          await this.fetchProfile()
+          await this.fetchUserFavorites()
+        }
+        this.isAuthChecked = true
+      }
+    },
+
     setUserAuth(status) {
       console.log('Setting isAuthenticated to:', status)
       this.isAuthenticated = status
@@ -107,13 +134,17 @@ export const useUserStore = defineStore('user', {
     //Req GET pour récupérer le profil User en utilisant le token pour l'authentication:
     async fetchProfile() {
       try {
-        const response = await axios.get('http://localhost:3000/api/utilisateurs/profile', {
-          headers: { Authorization: `Bearer ${this.token}` }
-        })
-        this.profile = response.data
-        console.log('Profile récupéré : ', this.profile)
+        if (this.user) {
+          const response = await axios.get('http://localhost:3000/api/utilisateurs/profile', {
+            headers: { Authorization: `Bearer ${this.token}` }
+          })
+          this.currentUser = response.data
+          this.profile = response.data
+          console.log('Profile récupéré : ', this.profile)
+          console.log('User Profile : ', this.currentUser)
+        }
       } catch (error) {
-        console.error('Erreur lors de la récupération du profil : ', error)
+        console.error('Erreur lors de la récupération du profil : ', error.response?.data || error)
       }
     },
     // Req PUT pour MAJ le profil User avec les nouvelles données 'ProfileData':
@@ -245,15 +276,16 @@ export const useUserStore = defineStore('user', {
           this.Id_Utilisateur
         )
         const favExists = this.userFavorites.some((fav) => fav.Id_Video === videoId)
+        console.log('FavExists : ', favExists)
 
         if (favExists) {
           await axios.delete(`http://localhost:3000/api/favoris`, {
-            data: { Id_Video: videoId, Id_Utilisateur: userId },
+            data: { videoId, userId },
             headers: { Authorization: `Bearer ${this.token}` }
           })
           this.userFavorites = this.userFavorites.filter((fav) => fav.Id_Video !== videoId)
         } else {
-          await axios.post(
+          const response = await axios.post(
             `http://localhost:3000/api/favoris`,
             {
               TMDB_Id: videoId,
@@ -264,13 +296,28 @@ export const useUserStore = defineStore('user', {
               headers: { Authorization: `Bearer ${this.token}` }
             }
           )
-          this.userFavorites.push({ Id_Video: videoId })
+          const newFavorite = response.data
+          // this.userFavorites.push({ Id_Video: videoId })
+          this.userFavorites.push(newFavorite)
           console.log(this.Id_Utilisateur)
           console.log(this.userFavorites)
           this.fetchFavorites() // Re fetch des fav apres ajout.
         }
       } catch (error) {
         console.error("Erreur lors de l'ajout/retrait des favoris", error)
+      }
+    },
+    async fetchUserFavorites() {
+      try {
+        if (this.user) {
+          const response = await axios.get(`http://localhost:3000/api/favoris/${this.user.id}`, {
+            headers: { Authorization: `Bearer ${this.token}` }
+          })
+          this.userFavorites = response.data
+          console.log('User favorites : ', this.userFavorites)
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des favoris', error.response?.data || error)
       }
     },
 

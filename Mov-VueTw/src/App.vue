@@ -23,7 +23,16 @@ export default {
     NavBar,
     SearchBar
   },
-  // created() {
+  async created() {
+    const userStore = useUserStore()
+    if (userStore.isAuthenticated) {
+      try {
+        await userStore.fetchUserFavorites()
+      } catch (error) {
+        console.error('Erreur lors du chargement des favoris', error)
+      }
+    }
+  },
   //   const userStore = useFacticeUserStore()
   //   userStore.loadSession()
   // }
