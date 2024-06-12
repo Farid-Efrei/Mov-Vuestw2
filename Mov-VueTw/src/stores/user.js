@@ -60,6 +60,7 @@ export const useUserStore = defineStore('user', {
           console.log('User Info:', this.user)
           // Décode le token JWT pour récupérer les informations de l'utilisateur
           this.currentUser = this.user
+          // localStorage.setItem('token', this.token)
           localStorage.setItem('token', this.token)
           // Stocke le token dans le localStorage
 
@@ -73,9 +74,32 @@ export const useUserStore = defineStore('user', {
         console.error('Echec de la connexion', error)
       }
     },
+    setUserAuth(status) {
+      console.log('Setting isAuthenticated to:', status)
+      this.isAuthenticated = status
+      console.log('isAuthenticated is now:', this.isAuthenticated)
+    },
+    // Dans votre store, ajoutez une méthode pour initialiser l'état à partir du localStorage:
+    initializeAuthState() {
+      const token = localStorage.getItem('token')
+      if (token) {
+        console.log('Token found:', token)
+        this.token = token
+        this.user = jwtDecode(token)
+        this.setUserAuth(true)
+        // Vous pourriez également vouloir récupérer le profil ici ou vérifier que le token est toujours valide
+      } else {
+        console.log('No token found')
+        this.setUserAuth(false)
+      }
+    },
+
     // register: envoie une Req d'INSCRIPTION les "credentials"(nom user, mail + mdp) au back pour créer un nv compte puis obtient et décode le token + récupère le profile User:
     async register(credentials) {
-      const response = await axios.post('http://localhost:3000/register', credentials)
+      const response = await axios.post(
+        'http://localhost:3000/api/utilisateurs/register',
+        credentials
+      )
       this.token = response.data.token
       this.user = jwtDecode(this.token)
       await this.fetchProfile()
@@ -97,7 +121,7 @@ export const useUserStore = defineStore('user', {
       const response = await axios.put('http://localhost:3000/profile', profileData, {
         headers: { Authorization: `Bearer ${this.token}` }
       })
-      this.profile = response
+      this.profile = response.data
     },
     // Req pour SUPPRIMER le profile User et déconnecte l'User:
     async deleteAccount() {
@@ -149,6 +173,107 @@ export const useUserStore = defineStore('user', {
       }
     },
 
+    async addFavorite2(movieId, magicRoute) {
+      try {
+        const userId = this.user ? this.user.id : null // Vérifier si this.user n'est pas null avant d'accéder à id
+
+        if (userId) {
+          // Procéder uniquement si userId n'est pas null
+          await axios.post(`http://localhost:3000/api/favoris/create-movie`, {
+            TMDB_Id: movieId,
+            magicRoute
+          })
+          const response = await axios.post(
+            'http://localhost:3000/favoris',
+            { movieId },
+            {
+              headers: { Authorization: `Bearer ${this.token}` }
+            }
+          )
+          this.favorites.push(response.data)
+        } else {
+          console.error("L'utilisateur n'est pas connecté")
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'ajout du film aux favoris", error)
+      }
+    },
+
+    async addFavorite3(movieId, magicRoute) {
+      try {
+        const userId = this.user ? this.user.id : null
+        console.log(this.userId)
+        if (userId) {
+          const response = await axios.post(
+            'http://localhost:3000/api/favoris/create-movie',
+            {
+              Id_Utilisateur: userId,
+              TMDB_Id: movieId,
+              magicRoute
+            },
+            {
+              headers: { Authorization: `Bearer ${this.token}` }
+            }
+          )
+
+          this.favorites.push(response.data)
+        } else {
+          console.error("L'utilisateur n'est pas connecté")
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'ajout aux favoris", error)
+      }
+    },
+
+    async toggleFavorite3(videoId, magicRoute) {
+      try {
+        //const videoId = this.videoId // Assurez-vous que videoId est correctement défini
+        const userId = this.user ? this.user.id : null
+        console.log(this.user.id, 'userId :' + userId + 'this :' + this.userId)
+        console.log('User ID in toggleFavorite3:', userId)
+        console.log('Video ID in toggleFavorite3:', videoId)
+        console.log('Magic Route in toggleFavorite3:', magicRoute)
+        if (!userId) {
+          throw new Error("L'utilisateur n'est pas connecté")
+        }
+        console.log(
+          'USERIDDDD : ',
+          userId,
+          'CURRENTUSER : ',
+          this.currentUser,
+          'IDUTILISATEURS : ',
+          this.Id_Utilisateur
+        )
+        const favExists = this.userFavorites.some((fav) => fav.Id_Video === videoId)
+
+        if (favExists) {
+          await axios.delete(`http://localhost:3000/api/favoris`, {
+            data: { Id_Video: videoId, Id_Utilisateur: userId },
+            headers: { Authorization: `Bearer ${this.token}` }
+          })
+          this.userFavorites = this.userFavorites.filter((fav) => fav.Id_Video !== videoId)
+        } else {
+          await axios.post(
+            `http://localhost:3000/api/favoris`,
+            {
+              TMDB_Id: videoId,
+              userId: userId,
+              magicRoute: magicRoute
+            },
+            {
+              headers: { Authorization: `Bearer ${this.token}` }
+            }
+          )
+          this.userFavorites.push({ Id_Video: videoId })
+          console.log(this.Id_Utilisateur)
+          console.log(this.userFavorites)
+          this.fetchFavorites() // Re fetch des fav apres ajout.
+        }
+      } catch (error) {
+        console.error("Erreur lors de l'ajout/retrait des favoris", error)
+      }
+    },
+
     async fetchAppreciationsByUser(userId) {
       try {
         const response = await axios.get(
@@ -168,8 +293,12 @@ export const useUserStore = defineStore('user', {
     // Envoie une req POST pour ajouter un film aux favoris de l'user:
     async addFavorite(movieId) {
       const response = await axios.post(
-        'http://localhost:3000/favorites',
-        { movieId },
+        'http://localhost:3000/favoris',
+        {
+          Id_Utilisateur: this.currentUser.id, // Envoyer l'ID de l'utilisateur actuel
+          Id_Video: movieId, // Envoyer l'ID du film
+          ajoutFavoris: true
+        },
         {
           headers: { Authorization: `Bearer ${this.token}` }
         }
@@ -178,10 +307,33 @@ export const useUserStore = defineStore('user', {
     },
     //Envoie une req DELETE pour supprimer un film des fav de l'user:
     async removeFavorite(favoriteId) {
-      await axios.delete(`http://localhost:3000/favorites/${favoriteId}`, {
+      await axios.delete(`http://localhost:3000/favoris/${favoriteId}`, {
         headers: { Authorization: `Bearer ${this.token}` }
       })
       this.favorites = this.favorites.filter((fav) => fav.id !== favoriteId)
+    },
+
+    // ********** APPRECIATIONS *****************
+    async addAppreciation({ movieId, comment, rating }) {
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/appreciations',
+          { Id_Video: movieId, commentaire: comment, note: rating, Id_Utilisateur: this.user.id },
+          { headers: { Authorization: `Bearer ${this.token}` } }
+        )
+        this.comments.push({
+          id: response.data.Id_Appreciation,
+          comment: response.data.commentaire,
+          movieId
+        })
+        this.ratings.push({
+          id: response.data.Id_Appreciation,
+          rating: response.data.note,
+          movieId
+        })
+      } catch (error) {
+        console.error("Erreur lors de l'ajout d'une appréciation", error)
+      }
     },
 
     // ***** LES COMMENTAIRES : *****

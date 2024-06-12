@@ -14,17 +14,23 @@
   </div>
 </template>
 <script>
-import { useFacticeUserStore } from './stores/facticeUserStore'
+// import { useFacticeUserStore } from './stores/facticeUserStore'
 import NavBar from './components/header/navBar.vue'
 import SearchBar from './components/header/SearchBar.vue'
+import { useUserStore } from './stores/user'
 export default {
   components: {
     NavBar,
     SearchBar
   },
-  created() {
-    const userStore = useFacticeUserStore()
-    userStore.loadSession()
+  // created() {
+  //   const userStore = useFacticeUserStore()
+  //   userStore.loadSession()
+  // }
+  // Dans votre composant principal ou dans votre point d'entrée de l'application (main.js ou App.vue)
+  mounted() {
+    // const userStore = useUserStore()
+    // userStore.initializeAuthState()
   }
 }
 </script>

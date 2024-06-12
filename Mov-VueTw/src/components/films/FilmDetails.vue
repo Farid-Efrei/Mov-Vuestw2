@@ -14,13 +14,13 @@
             src="../../assets/filmIcone.webp"
             alt="icone-film"
             class="size-20"
-            v-if="magicRoute === false"
+            v-if="magicRoute === 'film'"
           />
           <img
             src="../../assets/tvseries.webp"
             alt="icone-serie"
             class="size-20"
-            v-if="magicRoute"
+            v-if="magicRoute === 'serie'"
           />
         </div>
 
@@ -140,7 +140,7 @@
             </a>
           </div>
         </div>
-        <CommentsAndRatingsPerp :isAuthenticated="true" />
+        <CommentsAndRatingsPerp3 :magicRoute="magicRoute" />
       </div>
     </div>
     <CastFilm :casting="creditsData.cast" />
@@ -165,7 +165,9 @@ import getDatas from '../../service/getDatas'
 import Toktok from '../../service/tok'
 //const toktok = process.env.TMDB_API_TOKTOK;
 import ModalMedia from '@/components/items/ModalMedia.vue'
-import CommentsAndRatingsPerp from '@/components/films/CommentsAndRatingsPerp.vue'
+import CommentsAndRatingsPerp3 from '@/components/films/CommentsAndRatingsPerp3.vue'
+
+import { useUserStore } from '@/stores/user'
 
 export default {
   name: 'filmDetails',
@@ -173,7 +175,7 @@ export default {
     CastFilm,
     ImagesFilm,
     ModalMedia,
-    CommentsAndRatingsPerp
+    CommentsAndRatingsPerp3
   },
   data() {
     return {
@@ -222,6 +224,12 @@ export default {
     }
   },
   methods: {
+    async toggleFavorite() {
+      const userStore = useUserStore()
+      const movieId = this.$route.params.id // Supposons que l'ID de la vidéo est passé dans l'URL
+      const magicRoute = this.$route.params.magicRoute
+      await userStore.toggleFavorite(movieId, magicRoute)
+    },
     // async getMovieInfoById(movieId) {
     //     try {
     //         const response = await getDatas.getMoviePhotosProdById(movieId)
@@ -441,11 +449,12 @@ export default {
       // return this.$route.params.magicRoute;
 
       const magicRoute = this.$route.params.magicRoute
-      if (magicRoute === 'series') {
-        return true
-      } else {
-        return false
-      }
+      return magicRoute === 'series' ? 'serie' : 'film'
+      // if (magicRoute === 'series') {
+      //   return true
+      // } else {
+      //   return false
+      // }
     },
 
     // crewJob(){
