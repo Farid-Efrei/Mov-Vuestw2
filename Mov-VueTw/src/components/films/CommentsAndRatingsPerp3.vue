@@ -144,6 +144,7 @@
 import { useUserStore } from '@/stores/user'
 import { useMovieAppStore } from '@/stores/movieStoreAppreciations'
 import axios from 'axios'
+
 export default {
   props: {
     magicRoute: {
@@ -155,8 +156,8 @@ export default {
     return {
       newComment: '',
       newRating: 0,
-      editingAppreciation: null
-      // isFavorite: false
+      editingAppreciation: null,
+      isFavorite: false
     }
   },
   computed: {
@@ -174,9 +175,22 @@ export default {
     },
     ratings() {
       return this.movieStore.appreciations.filter((app) => app.note)
-    },
-    isFavorite() {
-      return this.userStore.userFavorites.some((fav) => fav.Id_Video === this.$route.params.id)
+    }
+    // isFavorite() {
+    //   return this.userStore.userFavorites.some((fav) => fav.Id_Video === this.$route.params.id)
+    // }
+  },
+  watch: {
+    'userStore.userFavorites': {
+      handler(newFavorites, oldFavorites) {
+        console.log('Favorites changed from', oldFavorites, 'to', newFavorites)
+        this.isFavorite = newFavorites.some(
+          (fav) => fav.Id_Video === parseInt(this.$route.params.id)
+        )
+        console.log('isFavorite is now:', this.isFavorite)
+      },
+      deep: true,
+      immediate: true // Run at start
     }
   },
   methods: {
@@ -190,9 +204,17 @@ export default {
         this.comments = response.data.comments
         this.ratings = response.data.ratings
 
-        // Vérif si la vidéo est en favoris:
-        this.isFavorite = this.userStore.userFavorites.some((fav) => fav.Id_Video === videoId)
-        console.log('isFAVO : ' + this.isFavorite)
+        // // Vérifiez la structure des favoris reçus:
+        // console.log('User favorites fetched: ', this.userStore.userFavorites)
+
+        // // Vérif si la vidéo est en favoris:
+        // this.isFavorite = this.userStore.userFavorites.some((fav) => {
+        //   console.log('Favori:', fav) // Ajoutez ce log pour vérifier chaque favorifav.Id_Video === videoId)
+        //   return fav.Id_Video === parseInt(videoId)
+        // })
+        // console.log('isFAVO : ' + this.isFavorite)
+        // // console.log('favIDVID : ' + this.fav.Id_Video)
+        // console.log('videoIDVID : ' + this.videoId)
       } catch (error) {
         console.error('Erreur lors de la récupération des commentaires et des notes :', error)
       }
@@ -214,7 +236,17 @@ export default {
       console.log('UserStore:', this.userStore.user) // Vérifiez l'utilisateur ici
       console.log('Video ID:', this.$route.params.id) // Vérifiez l'ID de la vidéo ici
       await this.userStore.toggleFavorite3(this.$route.params.id, this.magicRoute)
-      this.isFavorite = !this.isFavorite //MAJ de l'état local des fav.
+      // this.isFavorite = !this.isFavorite //MAJ de l'état local des fav.
+      // console.log('Après toggle:', this.userStore.userFavorites)
+      // this.$nextTick(() => {
+      //   this.isFavorite = this.userStore.userFavorites.some(
+      //     (fav) => fav.Id_Video === parseInt(this.$route.params.id)
+      //   )
+      // })
+      // console.log('isFavorite après toggle:', this.isFavorite)
+
+      // console.log('videoIDVID : ' + this.videoId)
+      // await this.userStore.fetchUserFavorites()
     },
 
     editComment(comment) {
@@ -238,12 +270,13 @@ export default {
       await this.movieStore.deleteAppreciation(appreciationId)
     }
   },
-  created() {
+  async created() {
     const videoId = this.$route.params.id // puisque l'ID de la vidéo est passé dnas l'url
+    // this.videoId = videoId
     console.log(this.videoId)
     console.log(this.movieId)
     console.log(this.video_Id)
-
+    await this.userStore.fetchUserFavorites() // Pour m'assurer que les fav sont chargés qd je créé le compo.
     this.fetchCommentsAndRatings(videoId)
   }
 }

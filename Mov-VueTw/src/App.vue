@@ -28,6 +28,7 @@ export default {
     if (userStore.isAuthenticated) {
       try {
         await userStore.fetchUserFavorites()
+        console.log('chargement User Fav')
       } catch (error) {
         console.error('Erreur lors du chargement des favoris', error)
       }

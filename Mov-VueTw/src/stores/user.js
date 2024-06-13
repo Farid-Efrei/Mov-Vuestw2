@@ -56,29 +56,25 @@ export const useUserStore = defineStore('user', {
           credentials
         )
         console.log('DATA : ', response.data)
-        if (response.data) {
-          if (response.data.token) {
-            this.token = response.data.token
-            this.user = jwtDecode(this.token)
-            console.log('Token:', this.token)
-            console.log('User Info:', this.user)
-            console.log(this.isAuthenticated)
-            // Décode le token JWT pour récupérer les informations de l'utilisateur
-            this.currentUser = this.user
-            // localStorage.setItem('token', this.token)
-            localStorage.setItem('token', this.token)
-            // Stocke le token dans le localStorage
+        if (response.data && response.data.token) {
+          this.token = response.data.token
+          this.user = jwtDecode(this.token)
+          console.log('Token:', this.token)
+          console.log('User Info:', this.user)
+          console.log(this.isAuthenticated)
+          // Décode le token JWT pour récupérer les informations de l'utilisateur
+          this.currentUser = this.user
+          // localStorage.setItem('token', this.token)
+          localStorage.setItem('token', this.token)
+          // Stocke le token dans le localStorage
 
-            await this.fetchProfile()
-            await this.fetchUserFavorites()
-            // Récupère le profil de l'utilisateur
-            // this.router.push('/profile')
-          } else {
-            console.error('Pas de token trouvé dans la réponse')
-            throw new Error('Echec de la Connexion')
-          }
+          // await this.fetchProfile()
+          // await this.fetchUserFavorites()
+          // Récupère le profil de l'utilisateur
+          this.isAuthChecked = true
+          // this.router.push('/profile')
         } else {
-          console.error('Réponse API invalide')
+          console.error('Pas de token trouvé dans la réponse')
           throw new Error('Echec de la Connexion')
         }
       } catch (error) {
@@ -264,6 +260,8 @@ export const useUserStore = defineStore('user', {
         console.log('User ID in toggleFavorite3:', userId)
         console.log('Video ID in toggleFavorite3:', videoId)
         console.log('Magic Route in toggleFavorite3:', magicRoute)
+        console.log('favorites : ', this.favorites)
+        console.log('USERfavorites : ', this.userFavorites)
         if (!userId) {
           throw new Error("L'utilisateur n'est pas connecté")
         }
@@ -275,7 +273,7 @@ export const useUserStore = defineStore('user', {
           'IDUTILISATEURS : ',
           this.Id_Utilisateur
         )
-        const favExists = this.userFavorites.some((fav) => fav.Id_Video === videoId)
+        const favExists = this.userFavorites.some((fav) => fav.Id_Video === parseInt(videoId))
         console.log('FavExists : ', favExists)
 
         if (favExists) {
@@ -283,7 +281,12 @@ export const useUserStore = defineStore('user', {
             data: { videoId, userId },
             headers: { Authorization: `Bearer ${this.token}` }
           })
-          this.userFavorites = this.userFavorites.filter((fav) => fav.Id_Video !== videoId)
+          this.$patch((state) => {
+            state.userFavorites = state.userFavorites.filter(
+              (fav) => fav.Id_Video !== parseInt(videoId)
+            )
+          })
+          // this.userFavorites = this.userFavorites.filter((fav) => fav.Id_Video !== videoId)
         } else {
           const response = await axios.post(
             `http://localhost:3000/api/favoris`,
@@ -298,10 +301,14 @@ export const useUserStore = defineStore('user', {
           )
           const newFavorite = response.data
           // this.userFavorites.push({ Id_Video: videoId })
-          this.userFavorites.push(newFavorite)
+          this.$patch((state) => {
+            state.userFavorites.push(newFavorite)
+          })
+          // this.userFavorites.push(newFavorite)
+          await this.fetchUserFavorites()
           console.log(this.Id_Utilisateur)
           console.log(this.userFavorites)
-          this.fetchFavorites() // Re fetch des fav apres ajout.
+          // this.fetchUserFavorites() // Re fetch des fav apres ajout.
         }
       } catch (error) {
         console.error("Erreur lors de l'ajout/retrait des favoris", error)
@@ -313,11 +320,16 @@ export const useUserStore = defineStore('user', {
           const response = await axios.get(`http://localhost:3000/api/favoris/${this.user.id}`, {
             headers: { Authorization: `Bearer ${this.token}` }
           })
-          this.userFavorites = response.data
+          this.$patch((state) => {
+            state.userFavorites = response.data || []
+          })
           console.log('User favorites : ', this.userFavorites)
         }
       } catch (error) {
         console.error('Erreur lors du chargement des favoris', error.response?.data || error)
+        this.$patch((state) => {
+          state.userFavorites = []
+        }) // Initialise userFavorites en cas d'erreur
       }
     },
 
