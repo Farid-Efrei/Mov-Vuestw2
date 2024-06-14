@@ -4,16 +4,52 @@ import axios from 'axios'
 export const useMovieAppStore = defineStore('movie', {
   state: () => ({
     appreciations: [], // État pour stocker les commentaires et les notes d'une vidéo
+    token: localStorage.getItem('token'),
     isFavorite: false // État pour indiquer si une vidéo est en favoris ou non
   }),
   actions: {
     async fetchCommentsAndRatings(movieId) {
       try {
-        const response = await axios.get(`http://localhost:3000/api/appreciations/${movieId}`)
+        const response = await axios.get(`http://localhost:3000/api/appreciations/${movieId}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
         this.appreciations = response.data
         console.log(this.appreciations)
       } catch (error) {
         console.error('Echec du Fetch des commentaires et notes', error)
+      }
+    },
+
+    async fetchAppreciationsByVideo(videoId) {
+      try {
+        const response = await axios.get(`http://localhost:3000/api/appreciations/${videoId}`)
+        this.appreciations = response.data
+      } catch (error) {
+        console.error('Erreur lors de la récupération des appréciations', error)
+      }
+    },
+
+    async addOrUpdateAppreciation(videoId, appreciationData) {
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/appreciations',
+          { ...appreciationData, Id_Video: videoId, magicRoute: this.magicRoute },
+          { headers: { Authorization: `Bearer ${this.token}` } }
+        )
+        await this.fetchAppreciationsByVideo(videoId)
+      } catch (error) {
+        console.error("Erreur lors de l'ajout ou de la mise à jour de l'appréciation", error)
+      }
+    },
+
+    async deleteTheAppreciation(appreciationId, videoId) {
+      try {
+        await axios.delete(`http://localhost:3000/api/appreciations/${appreciationId}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+        await this.fetchAppreciationsByVideo(videoId)
+      } catch (error) {
+        console.error("Erreur lors de la suppression de l'appréciation", error)
       }
     },
 
@@ -63,6 +99,25 @@ export const useMovieAppStore = defineStore('movie', {
       } catch (error) {
         console.error("Echec de l'ajout de l'appréciation", error)
         console.log(error.response.data) //Affiche le message d'erreur du serveur.
+      }
+    },
+    async addAppreciations(videoDetails, commentaire, note) {
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/api/appreciations',
+          {
+            videoDetails,
+            Id_Utilisateur: this.user.id,
+            commentaire,
+            note
+          },
+          {
+            headers: { Authorization: `Bearer ${this.token}` }
+          }
+        )
+        this.appreciations.push(response.data)
+      } catch (error) {
+        console.error('Erreur lors de l’ajout de l’appréciation :', error)
       }
     },
     async updateAppreciation(appreciationId, comment, rating) {

@@ -121,7 +121,7 @@
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
             fill="currentColor"
-            class="w-6 h-6 text-yellow-500"
+            class="w-6 h-6 text-yellow-200"
           >
             <path
               fill-rule="evenodd"
@@ -196,13 +196,14 @@ export default {
   methods: {
     async fetchCommentsAndRatings(videoId) {
       try {
-        const response = await axios.get(`/api/appreciations/${videoId}?type=${this.magicRoute}`, {
-          headers: {
-            Authorization: `Bearer ${this.userStore.token}`
-          }
-        })
-        this.comments = response.data.comments
-        this.ratings = response.data.ratings
+        await this.movieStore.fetchAppreciationsByVideo(videoId)
+        // const response = await axios.get(`/api/appreciations/${videoId}?type=${this.magicRoute}`, {
+        //   headers: {
+        //     Authorization: `Bearer ${this.userStore.token}`
+        //   }
+        // })
+        // this.comments = response.data.comments
+        // this.ratings = response.data.ratings
 
         // // Vérifiez la structure des favoris reçus:
         // console.log('User favorites fetched: ', this.userStore.userFavorites)
@@ -222,11 +223,12 @@ export default {
 
     async addCommentOrRating() {
       if (this.newComment || this.newRating) {
-        await this.movieStore.addAnAppreciation({
+        await this.movieStore.addOrUpdateAppreciation(this.$route.params.id, {
           // movieId: this.movieId,
-          movieId: this.$route.params.id,
-          comment: this.newComment,
-          rating: this.newRating
+          // movieId: this.$route.params.id,
+          commentaire: this.newComment,
+          note: this.newRating,
+          magicRoute: this.magicRoute
         })
         this.newComment = ''
         this.newRating = 0
@@ -256,18 +258,18 @@ export default {
     },
     async updateComment() {
       if (this.editingAppreciation) {
-        await this.movieStore.updateAppreciation(
-          this.editingAppreciation.Id_Appreciation,
-          this.newComment,
-          this.newRating
-        )
+        await this.movieStore.addOrUpdateAppreciation(this.editingAppreciation.Id_Video, {
+          commentaire: this.newComment,
+          note: this.newRating,
+          magicRoute: this.magicRoute
+        })
         this.editingAppreciation = null
         this.newComment = ''
         this.newRating = 0
       }
     },
     async deleteComment(appreciationId) {
-      await this.movieStore.deleteAppreciation(appreciationId)
+      await this.movieStore.deleteTheAppreciation(appreciationId, this.$route.params.id)
     }
   },
   async created() {
