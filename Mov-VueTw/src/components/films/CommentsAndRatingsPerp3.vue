@@ -31,7 +31,7 @@
             </div>
           </div>
           <button
-            @click="addCommentOrRating"
+            @click="addOrUpdateCommentOrRating"
             class="bg-green-600 text-white py-2 px-5 rounded-lg hover:bg-green-700 transition-colors duration-300"
           >
             Envoyer
@@ -196,14 +196,14 @@ export default {
   methods: {
     async fetchCommentsAndRatings(videoId) {
       try {
-        await this.movieStore.fetchAppreciationsByVideo(videoId)
-        // const response = await axios.get(`/api/appreciations/${videoId}?type=${this.magicRoute}`, {
-        //   headers: {
-        //     Authorization: `Bearer ${this.userStore.token}`
-        //   }
-        // })
-        // this.comments = response.data.comments
-        // this.ratings = response.data.ratings
+        // await this.movieStore.fetchAppreciationsByVideo(videoId)
+        const response = await axios.get(`/api/appreciations/${videoId}?type=${this.magicRoute}`, {
+          headers: {
+            Authorization: `Bearer ${this.userStore.token}`
+          }
+        })
+        this.comments = response.data.comments
+        this.ratings = response.data.ratings
 
         // // Vérifiez la structure des favoris reçus:
         // console.log('User favorites fetched: ', this.userStore.userFavorites)
@@ -216,24 +216,46 @@ export default {
         // console.log('isFAVO : ' + this.isFavorite)
         // // console.log('favIDVID : ' + this.fav.Id_Video)
         // console.log('videoIDVID : ' + this.videoId)
+        this.isFavorite = this.userStore.userFavorites.some(
+          (fav) => fav.Id_Video === parseInt(videoId)
+        )
       } catch (error) {
         console.error('Erreur lors de la récupération des commentaires et des notes :', error)
       }
     },
 
-    async addCommentOrRating() {
-      if (this.newComment || this.newRating) {
-        await this.movieStore.addOrUpdateAppreciation(this.$route.params.id, {
-          // movieId: this.movieId,
-          // movieId: this.$route.params.id,
-          commentaire: this.newComment,
-          note: this.newRating,
-          magicRoute: this.magicRoute
+    // async addCommentOrRating() {
+    //   if (this.newComment || this.newRating) {
+    //     await this.movieStore.addOrUpdateAppreciation(this.$route.params.id, {
+    //       // movieId: this.movieId,
+    //       // movieId: this.$route.params.id,
+    //       commentaire: this.newComment,
+    //       note: this.newRating,
+    //       magicRoute: this.magicRoute
+    //     })
+    //     this.newComment = ''
+    //     this.newRating = 0
+    //   }
+    // },
+    async addOrUpdateCommentOrRating() {
+      try {
+        await this.movieStore.addOrUpdateAppreciation2({
+          movieId: this.$route.params.id,
+          comment: this.newComment,
+          rating: this.newRating,
+          magicRoute: this.magicRoute,
+          appreciationId: this.editingAppreciation ? this.editingAppreciation.Id_Appreciation : null
         })
         this.newComment = ''
-        this.newRating = 0
+        this.newRating = this.editingAppreciation = null
+      } catch (error) {
+        console.error(
+          "Erreur lors de l'ajout ou de la mise à jour du commentaire ou de la note",
+          error
+        )
       }
     },
+
     async toggleFavorite() {
       console.log('UserStore:', this.userStore.user) // Vérifiez l'utilisateur ici
       console.log('Video ID:', this.$route.params.id) // Vérifiez l'ID de la vidéo ici
@@ -256,20 +278,24 @@ export default {
       this.newComment = comment.commentaire
       this.newRating = comment.note
     },
-    async updateComment() {
-      if (this.editingAppreciation) {
-        await this.movieStore.addOrUpdateAppreciation(this.editingAppreciation.Id_Video, {
-          commentaire: this.newComment,
-          note: this.newRating,
-          magicRoute: this.magicRoute
-        })
-        this.editingAppreciation = null
-        this.newComment = ''
-        this.newRating = 0
-      }
-    },
+    // async updateComment() {
+    //   if (this.editingAppreciation) {
+    //     await this.movieStore.addOrUpdateAppreciation(this.editingAppreciation.Id_Video, {
+    //       commentaire: this.newComment,
+    //       note: this.newRating,
+    //       magicRoute: this.magicRoute
+    //     })
+    //     this.editingAppreciation = null
+    //     this.newComment = ''
+    //     this.newRating = 0
+    //   }
+    // },
     async deleteComment(appreciationId) {
-      await this.movieStore.deleteTheAppreciation(appreciationId, this.$route.params.id)
+      try {
+        await this.movieStore.deleteAppreciation(appreciationId)
+      } catch (error) {
+        console.error('Erreur lors de la suppression du commentaire', error)
+      }
     }
   },
   async created() {
@@ -278,7 +304,7 @@ export default {
     console.log(this.videoId)
     console.log(this.movieId)
     console.log(this.video_Id)
-    await this.userStore.fetchUserFavorites() // Pour m'assurer que les fav sont chargés qd je créé le compo.
+    // await this.userStore.fetchUserFavorites() // Pour m'assurer que les fav sont chargés qd je créé le compo.
     this.fetchCommentsAndRatings(videoId)
   }
 }

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useUserStore } from './user'
 
 export const useMovieAppStore = defineStore('movie', {
   state: () => ({
@@ -9,9 +10,10 @@ export const useMovieAppStore = defineStore('movie', {
   }),
   actions: {
     async fetchCommentsAndRatings(movieId) {
+      const userStore = useUserStore()
       try {
         const response = await axios.get(`http://localhost:3000/api/appreciations/${movieId}`, {
-          headers: { Authorization: `Bearer ${this.token}` }
+          headers: { Authorization: `Bearer ${userStore.token}` }
         })
         this.appreciations = response.data
         console.log(this.appreciations)
@@ -21,31 +23,115 @@ export const useMovieAppStore = defineStore('movie', {
     },
 
     async fetchAppreciationsByVideo(videoId) {
+      const userStore = useUserStore()
       try {
-        const response = await axios.get(`http://localhost:3000/api/appreciations/${videoId}`)
+        const response = await axios.get(`http://localhost:3000/api/appreciations/${videoId}`, {
+          headers: { Authorization: `Bearer ${userStore.token}` }
+        })
         this.appreciations = response.data
+        console.log(this.appreciations)
       } catch (error) {
         console.error('Erreur lors de la récupération des appréciations', error)
+        this.appreciations = []
+      }
+    },
+    async fetchAppreciationsByUser(userId) {
+      try {
+        const userStore = useUserStore()
+        const response = await axios.get(`/api/appreciations/utilisateurs/${userId}`, {
+          headers: { Authorization: `Bearer ${userStore.token}` }
+        })
+        return response.data
+      } catch (error) {
+        console.error('Erreur lors de la récupération des appréciations par utilisateur', error)
+        throw error
       }
     },
 
-    async addOrUpdateAppreciation(videoId, appreciationData) {
+    async addOrUpdateAppreciation(videoId, { commentaire, note, magicRoute }) {
+      const userStore = useUserStore()
       try {
-        const response = await axios.post(
+        const userId = userStore.user ? userStore.user.id : null
+        if (!userId) {
+          throw new Error('Utilisateur non connecté.')
+        }
+        // Récupérer les détails de la vidéo depuis TMDB
+        const videoDetails = await tmdbService.getVideoDetails(videoId, magicRoute)
+        if (!videoDetails) {
+          throw new Error('Impossible de récupérer les détails de la vidéo.')
+        }
+        // Déterminer le type de vidéo (Film ou Série)
+        const type = magicRoute === 'film' ? 'Film' : 'Série'
+
+        // Créer ou mettre à jour la vidéo dans la base de données
+        await axios.post(
+          'http://localhost:3000/api/videos',
+          {
+            Id_Video: videoId,
+            titre: videoDetails.title || videoDetails.name,
+            duree: videoDetails.runtime || videoDetails.episode_run_time[0] || 0,
+            noteInterne: note,
+            TYPE: type,
+            Id_genre: videoDetails.genres[0]?.id || null // Assurez-vous que le genre existe
+          },
+          {
+            headers: { Authorization: `Bearer ${userStore.token}` }
+          }
+        )
+        // Ajouter ou mettre à jour l'appréciation
+        await axios.post(
           'http://localhost:3000/api/appreciations',
-          { ...appreciationData, Id_Video: videoId, magicRoute: this.magicRoute },
-          { headers: { Authorization: `Bearer ${this.token}` } }
+          { Id_Video: videoId, commentaire, note, Id_Utilisateur: userId, magicRoute },
+          { headers: { Authorization: `Bearer ${userStore.token}` } }
         )
         await this.fetchAppreciationsByVideo(videoId)
       } catch (error) {
         console.error("Erreur lors de l'ajout ou de la mise à jour de l'appréciation", error)
       }
     },
+    async addOrUpdateAppreciation2({ movieId, comment, rating, magicRoute, appreciationId }) {
+      try {
+        const userStore = useUserStore()
+        if (!userStore.isAuthenticated) {
+          throw new Error('Utilisateur non connecté.')
+        }
+
+        const payload = {
+          Id_Video: movieId,
+          Id_Utilisateur: userStore.user.id,
+          commentaire: comment,
+          note: rating !== 0 ? rating : null,
+          magicRoute
+        }
+
+        let response
+        if (appreciationId) {
+          response = await axios.put(
+            `http://localhost:3000/api/appreciations/${appreciationId}`,
+            payload,
+            {
+              headers: { Authorization: `Bearer ${userStore.token}` }
+            }
+          )
+        } else {
+          response = await axios.post('http://localhost:3000/api/appreciations', payload, {
+            headers: { Authorization: `Bearer ${userStore.token}` }
+          })
+        }
+
+        await this.fetchCommentsAndRatings(movieId)
+        return response.data
+      } catch (error) {
+        console.error("Erreur lors de l'ajout ou de la mise à jour de l'appréciation", error)
+        throw error
+      }
+    },
 
     async deleteTheAppreciation(appreciationId, videoId) {
+      const userStore = useUserStore()
       try {
         await axios.delete(`http://localhost:3000/api/appreciations/${appreciationId}`, {
-          headers: { Authorization: `Bearer ${this.token}` }
+          headers: { Authorization: `Bearer ${userStore.token}` }
         })
         await this.fetchAppreciationsByVideo(videoId)
       } catch (error) {
@@ -139,7 +225,10 @@ export const useMovieAppStore = defineStore('movie', {
     },
     async deleteAppreciation(appreciationId) {
       try {
-        await axios.delete(`http://localhost:3000/api/appreciations/${appreciationId}`)
+        const userStore = useUserStore()
+        await axios.delete(`http://localhost:3000/api/appreciations/${appreciationId}`, {
+          headers: { Authorization: `Bearer ${userStore.token}` }
+        })
         this.appreciations = this.appreciations.filter((app) => app.id !== appreciationId)
       } catch (error) {
         console.error("Echec de la suppression de l'appréciation", error)
