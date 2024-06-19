@@ -152,17 +152,42 @@ export const useUserStore = defineStore('user', {
     },
     // Req PUT pour MAJ le profil User avec les nouvelles données 'ProfileData':
     async updateProfile(profileData) {
-      const response = await axios.put('http://localhost:3000/profile', profileData, {
-        headers: { Authorization: `Bearer ${this.token}` }
-      })
-      this.profile = response.data
+      try {
+        const response = await axios.put(
+          `http://localhost:3000/api/utilisateurs/${this.user.id}`,
+          profileData,
+          {
+            headers: { Authorization: `Bearer ${this.token}` }
+          }
+        )
+        this.profile = response.data
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour du profil : ', error.response?.data || error)
+      }
+    },
+    async changePassword(oldPassword, newPassword) {
+      try {
+        await axios.put(
+          'http://localhost:3000/api/utilisateurs/change-password',
+          { oldPassword, newPassword },
+          {
+            headers: { Authorization: `Bearer ${this.token}` }
+          }
+        )
+      } catch (error) {
+        console.error('Erreur lors du changement de mot de passe : ', error.response?.data || error)
+      }
     },
     // Req pour SUPPRIMER le profile User et déconnecte l'User:
     async deleteAccount() {
-      await axios.delete('http://localhost:3000/profile', {
-        headers: { Authorization: `Bearer ${this.token}` }
-      })
-      this.logout()
+      try {
+        await axios.delete(`http://localhost:3000/api/utilisateurs/${this.user.id}`, {
+          headers: { Authorization: `Bearer ${this.token}` }
+        })
+        this.logout()
+      } catch (error) {
+        console.error('Erreur lors de la suppression du compte : ', error.response?.data || error)
+      }
     },
     // Réinitialise l'état du store pour Déconnecter l'User:
     logout() {
@@ -343,7 +368,7 @@ export const useUserStore = defineStore('user', {
     async fetchAppreciationsByUser(userId) {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/appreciations/utilisateur/${userId}`,
+          `http://localhost:3000/api/appreciations/utilisateurs/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${this.token}`

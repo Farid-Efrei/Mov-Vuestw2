@@ -1,1 +1,1 @@
-{"dependencies":{"vue3-toastify":"^0.2.1"}}
+{"dependencies":{"sweetalert2":"^11.12.0","vue3-toastify":"^0.2.1"}}

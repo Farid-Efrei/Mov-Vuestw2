@@ -5,11 +5,18 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  sweetalert2:
+    specifier: ^11.12.0
+    version: 11.12.0
   vue3-toastify:
     specifier: ^0.2.1
     version: 0.2.1
 
 packages:
+
+  /sweetalert2@11.12.0:
+    resolution: {integrity: sha512-Fe6sitTNReNdPF1q1w4uz1GAVv9acZff9Q7YILH5n6O/ti3MzwgfEA0aQ6tLjpy+O1NLXnZjUE//xrbluGXzJw==}
+    dev: false
 
   /vue3-toastify@0.2.1:
     resolution: {integrity: sha512-u4i5LCu1q5qs4L4Kbjb4u8NipCS8ox1fCHQ6XFS62676xnA6Q/AJRpZEkAurTMp723LeH6eQX6k9+24bKf1T4Q==}
