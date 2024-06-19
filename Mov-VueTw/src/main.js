@@ -3,8 +3,8 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { createPinia, PiniaVuePlugin } from 'pinia'
-
+import { createPinia } from 'pinia'
+import toast from '@/plugins/toast'
 
 const app = createApp(App)
 // 1. Créez une instance de Pinia
@@ -14,5 +14,5 @@ const pinia = createPinia()
 app.use(pinia)
 
 app.use(router)
-
+app.use(toast)
 app.mount('#app')

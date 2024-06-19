@@ -58,6 +58,7 @@
 // import {useFacticeUserStore} from '@/stores/facticeUserStore'
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
+import {toast} from 'vue3-toastify';
 
 export default {
     data() {
@@ -90,10 +91,20 @@ export default {
                     password: this.password
                 });
                 console.log("mail et pass : " + this.email, this.password);
-                this.$router.push({name:"profile"});
+                toast('Connexion réussie. Redirection vers le profil.', {
+          autoClose: 3000,
+          position: toast.POSITION.TOP_RIGHT
+        })
+        setTimeout(() => {
+          this.$router.push({ name: 'profile' });
+        }, 5000); // Délai de 5 secondes avant la redirection
             } catch (error) {
                 console.error('Identfiants de connexion invalides',error);
                 this.error = error.response?.data?.message || error.message || 'Echec de la connexion'
+                toast.error('Connexion échouée', {
+          autoClose: 3000,
+          position: toast.POSITION.BOTTOM_RIGHT
+        })
             }
         }
     },

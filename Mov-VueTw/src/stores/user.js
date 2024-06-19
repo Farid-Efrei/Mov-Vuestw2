@@ -119,13 +119,20 @@ export const useUserStore = defineStore('user', {
 
     // register: envoie une Req d'INSCRIPTION les "credentials"(nom user, mail + mdp) au back pour créer un nv compte puis obtient et décode le token + récupère le profile User:
     async register(credentials) {
-      const response = await axios.post(
-        'http://localhost:3000/api/utilisateurs/register',
-        credentials
-      )
-      this.token = response.data.token
-      this.user = jwtDecode(this.token)
-      await this.fetchProfile()
+      try {
+        // const response =
+        await axios.post('http://localhost:3000/api/utilisateurs/register', credentials)
+        // if (response.data.token && typeof response.data.token === 'string') {
+        //   this.token = response.data.token
+        //   this.user = jwtDecode(this.token)
+        //   localStorage.setItem('token', this.token)
+        //   await this.fetchProfile()
+        // } else {
+        //   throw new Error('Token invalide dans la réponse')
+        // }
+      } catch (error) {
+        console.error(error.message)
+      }
     },
     //Req GET pour récupérer le profil User en utilisant le token pour l'authentication:
     async fetchProfile() {

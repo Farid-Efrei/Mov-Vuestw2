@@ -230,6 +230,9 @@ export const useMovieAppStore = defineStore('movie', {
           headers: { Authorization: `Bearer ${userStore.token}` }
         })
         this.appreciations = this.appreciations.filter((app) => app.id !== appreciationId)
+        // emission d'un événement pr maj la vue apres suppression:
+        // this.$emit('appreciationDeleted', appreciationId)
+        // console.log('appreciations :' + this.appreciations)
       } catch (error) {
         console.error("Echec de la suppression de l'appréciation", error)
       }
