@@ -11,17 +11,22 @@
         <component :is="Component" />
       </transition>
     </RouterView>
+    <Footer>
+      <FooterCompo />
+    </Footer>
   </div>
 </template>
 <script>
 // import { useFacticeUserStore } from './stores/facticeUserStore'
+import FooterCompo from './components/footer/FooterCompo.vue'
 import NavBar from './components/header/navBar.vue'
 import SearchBar from './components/header/SearchBar.vue'
 import { useUserStore } from './stores/user'
 export default {
   components: {
     NavBar,
-    SearchBar
+    SearchBar,
+    FooterCompo
   },
   async created() {
     const userStore = useUserStore()
