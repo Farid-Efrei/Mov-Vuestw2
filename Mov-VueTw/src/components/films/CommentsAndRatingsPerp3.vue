@@ -85,7 +85,7 @@
         v-for="comment in comments"
         :key="comment.Id_Appreciation"
       >
-        <p class="text-gray-300">{{ comment.commentaire }} commentaires boucles</p>
+        <p class="text-gray-300">{{ comment.commentaire }}</p>
         <div class="flex justify-between items-center mt-2">
           <p class="text-sm text-yellow-400">Par {{ comment.Utilisateur.nom || 'Anonyme' }}</p>
 
@@ -130,7 +130,7 @@
             />
           </svg>
         </div>
-        <p class="text-gray-300">Note anonyme</p>
+        <p class="text-gray-300">{{ rating.Utilisateur.nom || 'Note anonyme' }}</p>
       </div>
     </div>
 
@@ -171,28 +171,8 @@ export default {
     isAuthenticated() {
       return this.userStore.isAuthenticated
     }
-    // comments() {
-    //   return this.movieStore.appreciations.filter((app) => app.commentaire)
-    // },
-    // ratings() {
-    //   return this.movieStore.appreciations.filter((app) => app.note)
-    // }
-    // isFavorite() {
-    //   return this.userStore.userFavorites.some((fav) => fav.Id_Video === this.$route.params.id)
-    // }
   },
   watch: {
-    // 'userStore.userFavorites': {
-    //   handler(newFavorites, oldFavorites) {
-    //     console.log('Favorites changed from', oldFavorites, 'to', newFavorites)
-    //     this.isFavorite = newFavorites.some(
-    //       (fav) => fav.Id_Video === parseInt(this.$route.params.id)
-    //     )
-    //     console.log('isFavorite is now:', this.isFavorite)
-    //   },
-    //   deep: true,
-    //   immediate: true // Run at start
-    // },
     'movieStore.appreciations': {
       handler(newAppreciations) {
         this.comments = newAppreciations.filter((app) => app.commentaire)
@@ -209,49 +189,11 @@ export default {
     async fetchAppreciations(videoId) {
       try {
         await this.movieStore.fetchAppreciationsByVideo(videoId)
-        // await this.movieStore.fetchAppreciationsByVideo(videoId)
-        //   const response = await axios.get(`/api/appreciations/${videoId}?type=${this.magicRoute}`, {
-        //     headers: {
-        //       Authorization: `Bearer ${this.userStore.token}`
-        //     }
-        //   })
-        //   this.comments = response.data.comments
-        //   this.ratings = response.data.ratings
-        //   console.log('Commentw : ' + response)
-        //   console.log('Comment : ' + this.appreciations)
-
-        //   // // Vérifiez la structure des favoris reçus:
-        //   // console.log('User favorites fetched: ', this.userStore.userFavorites)
-
-        //   // // Vérif si la vidéo est en favoris:
-        //   // this.isFavorite = this.userStore.userFavorites.some((fav) => {
-        //   //   console.log('Favori:', fav) // Ajoutez ce log pour vérifier chaque favorifav.Id_Video === videoId)
-        //   //   return fav.Id_Video === parseInt(videoId)
-        //   // })
-        //   // console.log('isFAVO : ' + this.isFavorite)
-        //   // // console.log('favIDVID : ' + this.fav.Id_Video)
-        //   // console.log('videoIDVID : ' + this.videoId)
-        //   this.isFavorite = this.userStore.userFavorites.some(
-        //     (fav) => fav.Id_Video === parseInt(videoId)
-        //   )
       } catch (error) {
         console.error('Erreur lors de la récupération des commentaires et des notes :', error)
       }
     },
 
-    // async addCommentOrRating() {
-    //   if (this.newComment || this.newRating) {
-    //     await this.movieStore.addOrUpdateAppreciation(this.$route.params.id, {
-    //       // movieId: this.movieId,
-    //       // movieId: this.$route.params.id,
-    //       commentaire: this.newComment,
-    //       note: this.newRating,
-    //       magicRoute: this.magicRoute
-    //     })
-    //     this.newComment = ''
-    //     this.newRating = 0
-    //   }
-    // },
     async addOrUpdateCommentOrRating() {
       try {
         await this.movieStore.addOrUpdateAppreciation2({
@@ -275,17 +217,6 @@ export default {
       console.log('UserStore:', this.userStore.user) // Vérifiez l'utilisateur ici
       console.log('Video ID:', this.$route.params.id) // Vérifiez l'ID de la vidéo ici
       await this.userStore.toggleFavorite3(this.$route.params.id, this.magicRoute)
-      // this.isFavorite = !this.isFavorite //MAJ de l'état local des fav.
-      // console.log('Après toggle:', this.userStore.userFavorites)
-      // this.$nextTick(() => {
-      //   this.isFavorite = this.userStore.userFavorites.some(
-      //     (fav) => fav.Id_Video === parseInt(this.$route.params.id)
-      //   )
-      // })
-      // console.log('isFavorite après toggle:', this.isFavorite)
-
-      // console.log('videoIDVID : ' + this.videoId)
-      // await this.userStore.fetchUserFavorites()
     },
 
     editComment(comment) {
@@ -293,18 +224,7 @@ export default {
       this.newComment = comment.commentaire
       this.newRating = comment.note
     },
-    // async updateComment() {
-    //   if (this.editingAppreciation) {
-    //     await this.movieStore.addOrUpdateAppreciation(this.editingAppreciation.Id_Video, {
-    //       commentaire: this.newComment,
-    //       note: this.newRating,
-    //       magicRoute: this.magicRoute
-    //     })
-    //     this.editingAppreciation = null
-    //     this.newComment = ''
-    //     this.newRating = 0
-    //   }
-    // },
+
     async deleteComment(appreciationId) {
       try {
         await this.movieStore.deleteAppreciation(appreciationId)
@@ -314,12 +234,7 @@ export default {
     }
   },
   async created() {
-    const videoId = this.$route.params.id // puisque l'ID de la vidéo est passé dnas l'url
-    // this.videoId = videoId
-    // console.log(this.videoId)
-    // console.log(this.movieId)
-    // console.log(this.video_Id)
-    // await this.userStore.fetchUserFavorites() // Pour m'assurer que les fav sont chargés qd je créé le compo.
+    const videoId = this.$route.params.id
     this.fetchAppreciations(videoId)
   }
 }

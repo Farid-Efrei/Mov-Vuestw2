@@ -55,7 +55,7 @@
 </template>
 
 <script>
-// import {useFacticeUserStore} from '@/stores/facticeUserStore'
+
 import { useUserStore } from '@/stores/user';
 import { useRouter } from 'vue-router';
 import {toast} from 'vue3-toastify';
@@ -69,20 +69,7 @@ export default {
         };
     },
     methods : {
-        // async login() {
-        //     const userStore = useFacticeUserStore();
-        //     try {
-        //         await userStore.login({
-        //             email : this.email,
-        //             password : this.password
-        //         });
-        //         this.$router.push({name:'profile'});
-        //         console.log(this.email, this.password);
-        //     } catch (error) {
-        //         alert('Identifiants de connexion invalides');
-        //         this.error = error.message;
-        //     }
-        // }
+   
         async login(){
             const userStore = useUserStore();
             try {
@@ -109,9 +96,7 @@ export default {
         }
     },
     setup(){
-        // const userStore = useFacticeUserStore();
-        // const router = useRouter();
-        // return{userStore, router}
+       
         const userStore = useUserStore();
         const router = useRouter();
         return  {userStore, router}

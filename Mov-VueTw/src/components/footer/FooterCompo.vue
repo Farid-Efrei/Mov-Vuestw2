@@ -7,7 +7,7 @@
         <span>© 2024 Popcorn's, le site dédié au cinéma Populaire. All rights reserved.</span>
       </div>
 
-      <!-- Contact Link -->
+      <!-- Contacts -->
       <div>
         <a href="/contact" class="hover:text-gray-300">Contact</a>
       </div>

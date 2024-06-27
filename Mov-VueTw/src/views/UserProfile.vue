@@ -118,15 +118,11 @@ import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import Swal from 'sweetalert2'
 
-// import { useFacticeUserStore } from '@/stores/facticeUserStore'
-
 export default {
   data() {
     return {
       profile: {},
       favorites: {},
-      // comments: {},
-      // ratings: {},
       password: {
         oldPassword: '',
         newPassword: ''
@@ -184,10 +180,6 @@ export default {
       } catch (error) {
         Swal.fire('Erreur', 'Erreur lors de la suppression du compte', 'error')
       }
-      // const userStore = useFacticeUserStore()
-      // await userStore.deleteAccount()
-      // alert('compte supprimé')
-      // this.$router.push({ name: 'home' })
     },
     toggleEditProfile() {
       this.showEditProfile = !this.showEditProfile
@@ -199,41 +191,20 @@ export default {
   },
 
   async mounted() {
-    // const userStore = useFacticeUserStore()
     const userStore = useUserStore()
     await userStore.fetchProfile()
     await userStore.fetchFavorites()
 
     await userStore.fetchAppreciationsByUser(userStore.user.id)
 
-    // await userStore.fetchComments() // Passer les paramètres appropriés si nécessaire
-    // await userStore.fetchRatings() // Passer les paramètres appropriés si nécessaire
     this.profile = userStore.userProfile
     console.log('Profil chargé: ' + this.profile)
-    this.favorites = await userStore.fetchFavorites() //
+    this.favorites = await userStore.fetchFavorites()
     console.log('favoris : ', this.favorites)
     this.appreciations = userStore.appreciations
-    // const videoID = this.$route.query.videoId
-    // console.log('VIDEO ID : ' + videoID)
-    // if (videoID) {
-    //   this.comments = await userStore.fetchComments(videoID)
-    //   // this.comments = userStore.userComments
-    // } else {
+
     console.log('appreciations : ', this.appreciations)
-    //   console.error('Video ID est indéfini.')
   }
-  // this.comments = await userStore.fetchComments()
-  // this.comments = await userStore.userComments
-  // this.ratings = userStore.userRatings
 }
 </script>
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
+<style scoped></style>

@@ -38,14 +38,6 @@ export default {
         console.error('Erreur lors du chargement des favoris', error)
       }
     }
-  },
-  //   const userStore = useFacticeUserStore()
-  //   userStore.loadSession()
-  // }
-  // Dans votre composant principal ou dans votre point d'entrée de l'application (main.js ou App.vue)
-  mounted() {
-    // const userStore = useUserStore()
-    // userStore.initializeAuthState()
   }
 }
 </script>

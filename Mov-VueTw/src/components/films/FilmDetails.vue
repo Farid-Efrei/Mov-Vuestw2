@@ -4,7 +4,7 @@
       <img
         :src="imageUrl"
         :alt="video.title || video.name"
-        class="size-full max-w-[100] object-cover"
+        class="size-full max-w-[50%] object-cover"
       />
 
       <div class="ml-24">
@@ -52,16 +52,16 @@
               {{ video.runtime }}min
             </span>
             <div class="">
-              Type : Film ou Série | {{ $route.params.magicRoute }}<br />
+              Type : {{ $route.params.magicRoute }}<br />
 
               <div v-if="magicRoute && video && video.last_episode_to_air && video.networks">
-                Nombre de Saison(s): 12 | {{ video.number_of_seasons }}<br />
-                Nombre d'épisodes (prévus):24 | {{ video.number_of_episodes }}<br />
+                Nombre de Saison(s): {{ video.number_of_seasons }}<br />
+                Nombre d'épisodes (prévus): {{ video.number_of_episodes }}<br />
                 Origine: {{ video.origin_country }}<br />
-                Dernier épisode diffusé: numéro épisode et titre : 7 le réveil de Dai |
+                Dernier épisode diffusé:
                 {{ video.last_episode_to_air.episode_number }} - {{ video.last_episode_to_air.name
                 }}<br />
-                Statut de la série : en cours | {{ video.status }} <br />
+                Statut de la série : {{ video.status }} <br />
                 Produit par : {{ video.networks[0].name }} <br />
               </div>
             </div>
@@ -81,7 +81,6 @@
           <br /><br />
 
           <span class="font-semibold text-red-300 text-lg"> "{{ video.tagline }}" </span>
-          <!-- En 1981, Arthur Fleck travaille dans une agence de clowns à Gotham City. Méprisé et incompris par ceux qui lui font face, il mène une morne vie en marge de la société et habite dans un immeuble miteux avec sa mère Penny. Un soir, il se fait agresser dans le métro par trois traders de Wayne Enterprises alcoolisés qui le brutalisent, le poussant à les tuer en retour. Son geste inspire à une partie de la population l'idée de s'en prendre eux aussi aux puissants. Dans cette société décadente, Arthur bascule peu à peu dans la folie et finit par devenir le Joker, un dangereux tueur psychopathe victime d'hallucinations et le plus grand criminel de Gotham City. -->
         </p>
         <div class="mt-7">
           <h3 class="text-xl font-semibold">Realisation / Production Cast</h3>
@@ -160,8 +159,7 @@
 import CastFilm from '@/components/films/CastFilm.vue'
 import ImagesFilm from '@/components/films/ImagesFilm.vue'
 import requete from '../../service/api'
-import getDatas from '../../service/getDatas'
-// eslint-disable-next-line no-undef
+
 import Toktok from '../../service/tok'
 //const toktok = process.env.TMDB_API_TOKTOK;
 import ModalMedia from '@/components/items/ModalMedia.vue'
@@ -183,9 +181,7 @@ export default {
       last_episode_to_air: '',
       creditsData: {},
       videosData: {},
-      // imageData: {},
       imagesScenes: {},
-      //toktok:'',
       showModal: false,
       selectedMediaSrc: '',
       selectedMediaAlt: '',
@@ -193,27 +189,7 @@ export default {
     }
   },
   mounted() {
-    // this.fetchFilm(this.$route.params.id)
-    // const moviii = this.$route.params.id
-    // this.getMovieInfoById(moviii)
     this.fetchDatas()
-
-    //this.fetchSerieOrFilmV2(this.$route.params.id);
-
-    // this.fetchImage(this.$route.params.id);
-    //console.log("imageUrl : " + this.imageUrl);
-
-    //this.fetchBackdrops(this.$route.params.id)
-
-    // console.log('chemin : ' + this.$route.params.id);
-    // console.log('le media type est : ' + this.$route.params.magicRoute, this.$route.params.id);
-
-    /*  if (this.video.media_type == 'movie') {
-             this.fetchSerie(this.$route.params.id)
-         } else  {
-
-             this.fetchFilm(this.$route.params.id)
-         } */
   },
   watch: {
     '$route.params': {
@@ -226,65 +202,11 @@ export default {
   methods: {
     async toggleFavorite() {
       const userStore = useUserStore()
-      const movieId = this.$route.params.id // Supposons que l'ID de la vidéo est passé dans l'URL
+      const movieId = this.$route.params.id
       const magicRoute = this.$route.params.magicRoute
       await userStore.toggleFavorite(movieId, magicRoute)
     },
-    // async getMovieInfoById(movieId) {
-    //     try {
-    //         const response = await getDatas.getMoviePhotosProdById(movieId)
-    //         this.moviii = response
-    //         console.log("Datas : ",this.moviii );
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // },
 
-    /*  async fetchFilm(videoId){
-        /*  async fetchFilm(videoId){
-                 const response = await requete(
-                 "/movie/" + videoId
-             )
-             this.video = response.data
-             },
-
-         async fetchSerie(videoId){
-             const response = await requete(
-                 "/tv/" + videoId
-             )
-             this.video = response.data
-         }, */
-    // async fetchSerieOrFilm(videoId) {
-    //     try {
-    //         const magicRoute = this.$route.params.magicRoute;
-
-    //         if (magicRoute === 'films') {
-    //             const response = await requete(
-    //                 `/movie/${videoId}`
-    //             );
-    //             const responseCredits = await requete(`/movie/${videoId}/credits`);
-    //             const responseImages = await requete(`/movie/${videoId}/images`);
-
-    //             this.video = response.data;
-    //             this.creditsData = responseCredits.data;
-    //             this.imagesData = responseImages.data;
-    //             console.log(this.imagesData.posters);
-    //         } else {
-    //             const response = await requete(
-    //                 '/tv/' + videoId || `/tv/${videoId}/credits`
-    //             );
-    //             const responseCredits = await requete(`/tv/${videoId}/credits`);
-    //             const responseImages = await requete (`/tv/${videoId}/images`);
-    //             this.video = response.data;
-    //             this.creditsData = responseCredits.data;
-    //             this.imagesData = responseImages.data;
-    //         }
-    //         console.log("creditsData vaut : " + this.creditsData.cast);
-    //         console.log("imagesData vaut : " + this.imagesData.backdrops);
-    //     } catch (error) {
-    //         console.error("Une erreur s'est produite lros de la récupération de la video", error)
-    //     }
-    // },
     async fetchSerieOrFilmV2(videoId) {
       try {
         const magicRoute = this.$route.params.magicRoute
@@ -325,13 +247,7 @@ export default {
         await this.fetchBackdrops(id)
       }
     },
-    //    async fetchImage(videoId){
 
-    //     const response = await requete(`movie/${videoId}/images`, {accept :'application/json'});
-    //     this.imageData = response.data;
-    //     console.log(this.imageData);
-
-    //     }
     fetchBackdrops(videoId) {
       //TODO: Provisoirement le token est stoké dans les services en attendant le côté serveur pour le stocker et faire des appels !
 
@@ -361,16 +277,6 @@ export default {
           .catch((err) => console.error(err))
       }
     },
-    // async fetchBackdropsV2(videoId) {
-    //     try {
-    //         const imagesResponse = await requete.getImagesByVideoId(videoId);
-    //         console.log('Images Response:', imagesResponse.data);
-    //         this.imagesScenes = imagesResponse.data;
-    //     } catch (error) {
-    //         console.error('Echec de la recup des images', error);
-
-    //     }
-    // }
 
     showTrailer() {
       const trailerUrl = this.youtubeVideo()
@@ -383,12 +289,7 @@ export default {
         alert('Bande-Annonce non disponible pour cette vidéo')
       }
     },
-    // showImage(imageUrl) {
-    //     this.mediaUrl = this.getImageUrl(imageUrl);
-    //     this.mediaType = 'image';
-    //     this.modalTitle = 'Image';
-    //     this.showModal = true;
-    // },
+
     getImageUrl(path) {
       return 'https://image.tmdb.org/t/p/original/' + path
     },
@@ -399,22 +300,9 @@ export default {
       this.selectedMediaType = media.mediaType
       this.showModal = true
     },
-
-    // closeModal() {
-    //     this.showModal = false;
-    //     // this.mediaUrl = '';
-    //     // this.mediaType = '';
-    //     this.selectedImageUrl = '';
-    // },
     openTrailer() {
       console.log('videoData.results :', this.videosData.results)
 
-      // Convertir le Proxy en tableau normal
-      //const resultsArray = Array.from(this.videosData.results);
-
-      //if (Array.isArray(this.videosData.results)) {
-      // Rechercher la bande-annonce
-      //const trailer = resultsArray.find(video => video.type === 'Trailer' && video.site === 'YouTube');
       const trailer = this.videosData.results.find(
         (video) => video.type === 'Trailer' && video.site === 'YouTube'
       )
@@ -439,61 +327,12 @@ export default {
       return this.video.poster_path
         ? `https://image.tmdb.org/t/p/original${this.video.poster_path}`
         : "pas d'image disponible"
-      // if(this.video.poster_path){
-      //     return 'https://image.tmdb.org/t/p/original/' + this.video.poster_path
-
-      // } else return 'No image available';
     },
 
     magicRoute() {
-      // return this.$route.params.magicRoute;
-
       const magicRoute = this.$route.params.magicRoute
       return magicRoute === 'series' ? 'serie' : 'film'
-      // if (magicRoute === 'series') {
-      //   return true
-      // } else {
-      //   return false
-      // }
     },
-
-    // crewJob(){
-    //     if ( this.creditsData.crew.job) {
-    //         console.log(this.creditsData.crew.job)
-
-    //         if (this.creditsData.crew.job === 'Director'){
-    //             return 'Réalisation';
-
-    //         }else if (this.crew.job === 'Novel') {
-    //             return 'adapté du Roman de';
-
-    //         } else if (this.crew.job === 'Screenplay'){
-    //             return 'Scénario';
-    //         } else if (this.crew.job === 'Producer'){
-    //             return 'Producteur'
-    //     } else if (this.crew.job === 'Executive Producer'){
-    //         return 'Producteur exécutif'
-    //     } else if (this.crew.job === 'Writer'){
-    //         return 'Scénariste'
-    //     } else if (this.crew.job === 'Editor'){
-    //         return 'Editeur'
-    //     } else if (this.crew.job === 'Director of Photography'){
-    //         return 'Directeur visuel'
-    //     } else if (this.crew.job === 'Original Music Composer'){
-    //         return 'Compositeur bande originale'
-    //     } else if (this.crew.job === 'Orginal Film Writer'){
-    //         return 'Réalisateur du film original'
-    //     } else if (this.crew.job === 'Co-Director'){
-    //         return 'Co-réalisation'
-    //     } else if (this.crew.job === 'Associate Editor'){
-    //         return 'Edition'
-    //     } else if (this.crew.job === 'Co-Executive Producer'){
-    //         return 'Producteur executif associé'
-    //     } else if (this.crew.job === 'Other'){
-    //         return 'Autre rôle'
-    //     } else return 'Autre';
-    // } else return 'non spécifié';
-    // },
 
     crewJobs() {
       if (!this.creditsData.crew || !Array.isArray(this.creditsData.crew)) {
@@ -535,21 +374,6 @@ export default {
         }
       })
     }
-    // youtubeVideo() {
-
-    //     // const trailer = this.videosData.results.find(video => video.type === 'Trailer');
-    //     // return trailer ? `https://www.youtube.com/watch?v=${trailer.key}` : 'no found';
-
-    // // console.log('videosData:', this.videosData);
-    // if (this.videosData && this.videosData.results && this.videosData.results.length > 0 && this.videosData.results[0].key) {
-    //     console.log('key:', this.videosData.results[0].key);
-    //     return "https://www.youtube.com/embed/" + this.videosData.results[0].key;
-    // } else {
-    //     console.log('No key found');
-    //     return null;
-    // }
-
-    // }
   }
 }
 </script>

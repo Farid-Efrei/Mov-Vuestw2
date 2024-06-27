@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-// import jwt_decode from 'jwt-decode'
 import { jwtDecode } from 'jwt-decode'
 
 export const useUserStore = defineStore('user', {
@@ -37,19 +36,6 @@ export const useUserStore = defineStore('user', {
   actions: {
     // login: envoie une Requete de CONNEXION avec les "credentials" (mail + mdp) au back pour obtenir un token, puis décode le token pour obtenir les info de l'user + récupère le profil User:
     async login(credentials) {
-      //   try {
-      //     const response = await axios.post(
-      //       'http://localhost:3000/api/utilisateurs/login',
-      //       credentials
-      //     )
-      //     this.token = response.data.token
-      //     this.user = jwt_decode(this.token)
-      //     localStorage.setItem('token', this.token)
-      //     await this.fetchProfile()
-      //   } catch (error) {
-      //     throw new Error('Echec de la connexion')
-      //   }
-
       try {
         const response = await axios.post(
           'http://localhost:3000/api/utilisateurs/login',
@@ -68,11 +54,7 @@ export const useUserStore = defineStore('user', {
           localStorage.setItem('token', this.token)
           // Stocke le token dans le localStorage
 
-          // await this.fetchProfile()
-          // await this.fetchUserFavorites()
-          // Récupère le profil de l'utilisateur
           this.isAuthChecked = true
-          // this.router.push('/profile')
         } else {
           console.error('Pas de token trouvé dans la réponse')
           throw new Error('Echec de la Connexion')
@@ -102,7 +84,7 @@ export const useUserStore = defineStore('user', {
       this.isAuthenticated = status
       console.log('isAuthenticated is now:', this.isAuthenticated)
     },
-    // Dans votre store, ajoutez une méthode pour initialiser l'état à partir du localStorage:
+    // Dans mon store, j'ajoute une méthode pour initialiser l'état à partir du localStorage:
     initializeAuthState() {
       const token = localStorage.getItem('token')
       if (token) {
@@ -110,7 +92,7 @@ export const useUserStore = defineStore('user', {
         this.token = token
         this.user = jwtDecode(token)
         this.setUserAuth(true)
-        // Vous pourriez également vouloir récupérer le profil ici ou vérifier que le token est toujours valide
+        // jepeux  également vouloir récupérer le profil ici ou vérifier que le token est toujours valide
       } else {
         console.log('No token found')
         this.setUserAuth(false)
@@ -120,20 +102,12 @@ export const useUserStore = defineStore('user', {
     // register: envoie une Req d'INSCRIPTION les "credentials"(nom user, mail + mdp) au back pour créer un nv compte puis obtient et décode le token + récupère le profile User:
     async register(credentials) {
       try {
-        // const response =
         await axios.post('http://localhost:3000/api/utilisateurs/register', credentials)
-        // if (response.data.token && typeof response.data.token === 'string') {
-        //   this.token = response.data.token
-        //   this.user = jwtDecode(this.token)
-        //   localStorage.setItem('token', this.token)
-        //   await this.fetchProfile()
-        // } else {
-        //   throw new Error('Token invalide dans la réponse')
-        // }
       } catch (error) {
         console.error(error.message)
       }
     },
+
     //Req GET pour récupérer le profil User en utilisant le token pour l'authentication:
     async fetchProfile() {
       try {
@@ -232,57 +206,57 @@ export const useUserStore = defineStore('user', {
       }
     },
 
-    async addFavorite2(movieId, magicRoute) {
-      try {
-        const userId = this.user ? this.user.id : null // Vérifier si this.user n'est pas null avant d'accéder à id
+    // async addFavorite2(movieId, magicRoute) {
+    //   try {
+    //     const userId = this.user ? this.user.id : null // Vérifier si this.user n'est pas null avant d'accéder à id
 
-        if (userId) {
-          // Procéder uniquement si userId n'est pas null
-          await axios.post(`http://localhost:3000/api/favoris/create-movie`, {
-            TMDB_Id: movieId,
-            magicRoute
-          })
-          const response = await axios.post(
-            'http://localhost:3000/favoris',
-            { movieId },
-            {
-              headers: { Authorization: `Bearer ${this.token}` }
-            }
-          )
-          this.favorites.push(response.data)
-        } else {
-          console.error("L'utilisateur n'est pas connecté")
-        }
-      } catch (error) {
-        console.error("Erreur lors de l'ajout du film aux favoris", error)
-      }
-    },
+    //     if (userId) {
+    //       // Procéder uniquement si userId n'est pas null
+    //       await axios.post(`http://localhost:3000/api/favoris/create-movie`, {
+    //         TMDB_Id: movieId,
+    //         magicRoute
+    //       })
+    //       const response = await axios.post(
+    //         'http://localhost:3000/favoris',
+    //         { movieId },
+    //         {
+    //           headers: { Authorization: `Bearer ${this.token}` }
+    //         }
+    //       )
+    //       this.favorites.push(response.data)
+    //     } else {
+    //       console.error("L'utilisateur n'est pas connecté")
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur lors de l'ajout du film aux favoris", error)
+    //   }
+    // },
 
-    async addFavorite3(movieId, magicRoute) {
-      try {
-        const userId = this.user ? this.user.id : null
-        console.log(this.userId)
-        if (userId) {
-          const response = await axios.post(
-            'http://localhost:3000/api/favoris/create-movie',
-            {
-              Id_Utilisateur: userId,
-              TMDB_Id: movieId,
-              magicRoute
-            },
-            {
-              headers: { Authorization: `Bearer ${this.token}` }
-            }
-          )
+    // async addFavorite3(movieId, magicRoute) {
+    //   try {
+    //     const userId = this.user ? this.user.id : null
+    //     console.log(this.userId)
+    //     if (userId) {
+    //       const response = await axios.post(
+    //         'http://localhost:3000/api/favoris/create-movie',
+    //         {
+    //           Id_Utilisateur: userId,
+    //           TMDB_Id: movieId,
+    //           magicRoute
+    //         },
+    //         {
+    //           headers: { Authorization: `Bearer ${this.token}` }
+    //         }
+    //       )
 
-          this.favorites.push(response.data)
-        } else {
-          console.error("L'utilisateur n'est pas connecté")
-        }
-      } catch (error) {
-        console.error("Erreur lors de l'ajout aux favoris", error)
-      }
-    },
+    //       this.favorites.push(response.data)
+    //     } else {
+    //       console.error("L'utilisateur n'est pas connecté")
+    //     }
+    //   } catch (error) {
+    //     console.error("Erreur lors de l'ajout aux favoris", error)
+    //   }
+    // },
 
     async toggleFavorite3(videoId, magicRoute) {
       try {
@@ -382,20 +356,20 @@ export const useUserStore = defineStore('user', {
       }
     },
     // Envoie une req POST pour ajouter un film aux favoris de l'user:
-    async addFavorite(movieId) {
-      const response = await axios.post(
-        'http://localhost:3000/favoris',
-        {
-          Id_Utilisateur: this.currentUser.id, // Envoyer l'ID de l'utilisateur actuel
-          Id_Video: movieId, // Envoyer l'ID du film
-          ajoutFavoris: true
-        },
-        {
-          headers: { Authorization: `Bearer ${this.token}` }
-        }
-      )
-      this.favorites.push(response.data)
-    },
+    // async addFavorite(movieId) {
+    //   const response = await axios.post(
+    //     'http://localhost:3000/favoris',
+    //     {
+    //       Id_Utilisateur: this.currentUser.id, // Envoyer l'ID de l'utilisateur actuel
+    //       Id_Video: movieId, // Envoyer l'ID du film
+    //       ajoutFavoris: true
+    //     },
+    //     {
+    //       headers: { Authorization: `Bearer ${this.token}` }
+    //     }
+    //   )
+    //   this.favorites.push(response.data)
+    // },
     //Envoie une req DELETE pour supprimer un film des fav de l'user:
     async removeFavorite(favoriteId) {
       await axios.delete(`http://localhost:3000/favoris/${favoriteId}`, {
@@ -498,15 +472,6 @@ export const useUserStore = defineStore('user', {
 })
 
 /* EXPLICATION :
-Bien sûr! Voici une explication détaillée du code que vous avez fourni. Ce code est un store Pinia pour gérer l'état utilisateur, l'authentification, les favoris, les commentaires et les notes dans une application Vue.js.
-
-### Imports:
-
-- `defineStore` : Fonction de Pinia pour définir un nouveau store.
-- `axios` : Librairie pour faire des requêtes HTTP.
-- `jwt_decode` : Librairie pour décoder les JSON Web Tokens (JWT).
-
-
 
 ### Raisons et Utilité
 

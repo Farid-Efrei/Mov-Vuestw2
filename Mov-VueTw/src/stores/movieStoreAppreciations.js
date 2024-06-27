@@ -48,47 +48,47 @@ export const useMovieAppStore = defineStore('movie', {
       }
     },
 
-    async addOrUpdateAppreciation(videoId, { commentaire, note, magicRoute }) {
-      const userStore = useUserStore()
-      try {
-        const userId = userStore.user ? userStore.user.id : null
-        if (!userId) {
-          throw new Error('Utilisateur non connecté.')
-        }
-        // Récupérer les détails de la vidéo depuis TMDB
-        const videoDetails = await tmdbService.getVideoDetails(videoId, magicRoute)
-        if (!videoDetails) {
-          throw new Error('Impossible de récupérer les détails de la vidéo.')
-        }
-        // Déterminer le type de vidéo (Film ou Série)
-        const type = magicRoute === 'film' ? 'Film' : 'Série'
+    // async addOrUpdateAppreciation(videoId, { commentaire, note, magicRoute }) {
+    //   const userStore = useUserStore()
+    //   try {
+    //     const userId = userStore.user ? userStore.user.id : null
+    //     if (!userId) {
+    //       throw new Error('Utilisateur non connecté.')
+    //     }
+    //     // Récupérer les détails de la vidéo depuis TMDB
+    //     const videoDetails = await tmdbService.getVideoDetails(videoId, magicRoute)
+    //     if (!videoDetails) {
+    //       throw new Error('Impossible de récupérer les détails de la vidéo.')
+    //     }
+    //     // Déterminer le type de vidéo (Film ou Série)
+    //     const type = magicRoute === 'film' ? 'Film' : 'Série'
 
-        // Créer ou mettre à jour la vidéo dans la base de données
-        await axios.post(
-          'http://localhost:3000/api/videos',
-          {
-            Id_Video: videoId,
-            titre: videoDetails.title || videoDetails.name,
-            duree: videoDetails.runtime || videoDetails.episode_run_time[0] || 0,
-            noteInterne: note,
-            TYPE: type,
-            Id_genre: videoDetails.genres[0]?.id || null // Assurez-vous que le genre existe
-          },
-          {
-            headers: { Authorization: `Bearer ${userStore.token}` }
-          }
-        )
-        // Ajouter ou mettre à jour l'appréciation
-        await axios.post(
-          'http://localhost:3000/api/appreciations',
-          { Id_Video: videoId, commentaire, note, Id_Utilisateur: userId, magicRoute },
-          { headers: { Authorization: `Bearer ${userStore.token}` } }
-        )
-        await this.fetchAppreciationsByVideo(videoId)
-      } catch (error) {
-        console.error("Erreur lors de l'ajout ou de la mise à jour de l'appréciation", error)
-      }
-    },
+    //     // Créer ou mettre à jour la vidéo dans la base de données
+    //     await axios.post(
+    //       'http://localhost:3000/api/videos',
+    //       {
+    //         Id_Video: videoId,
+    //         titre: videoDetails.title || videoDetails.name,
+    //         duree: videoDetails.runtime || videoDetails.episode_run_time[0] || 0,
+    //         noteInterne: note,
+    //         TYPE: type,
+    //         Id_genre: videoDetails.genres[0]?.id || null // Assurez-vous que le genre existe
+    //       },
+    //       {
+    //         headers: { Authorization: `Bearer ${userStore.token}` }
+    //       }
+    //     )
+    //     // Ajouter ou mettre à jour l'appréciation
+    //     await axios.post(
+    //       'http://localhost:3000/api/appreciations',
+    //       { Id_Video: videoId, commentaire, note, Id_Utilisateur: userId, magicRoute },
+    //       { headers: { Authorization: `Bearer ${userStore.token}` } }
+    //     )
+    //     await this.fetchAppreciationsByVideo(videoId)
+    //   } catch (error) {
+    //     console.error("Erreur lors de l'ajout ou de la mise à jour de l'appréciation", error)
+    //   }
+    // },
     async addOrUpdateAppreciation2({ movieId, comment, rating, magicRoute, appreciationId }) {
       try {
         const userStore = useUserStore()

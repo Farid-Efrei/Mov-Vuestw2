@@ -18,8 +18,6 @@
         {{ email }}
       </div>
       <div class="mb-6">
-        <!-- <input type="text" class="text-black"
-                 placeholder="Username" v-model="username"> -->
         <label for="password" class="block font-bold text-sm text-orange-300"> Password : </label>
         <input
           type="password"
@@ -55,13 +53,12 @@
       </router-link>
       <p v-if="error" class="text-red-500 text-center text-lg">{{ error }}</p>
     </form>
-    <div>
+    <!-- <div>
       <button @click="notify">Notify !</button>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
-// import { useFacticeUserStore } from '@/stores/facticeUserStore'
 import { useUserStore } from '@/stores/user'
 import { toast } from 'vue3-toastify'
 
@@ -77,7 +74,6 @@ export default {
   },
   methods: {
     async register() {
-      //   const userStore = useFacticeUserStore()
       const userStore = useUserStore()
       if (this.password !== this.confirmPassword) {
         this.error = 'Les mots de passe ne correspondent pas.'
@@ -91,7 +87,7 @@ export default {
         })
         toast.success('Inscription réussie. Veuillez maintenant vous connecter.', {
           autoClose: 3000,
-          position: toast.POSITION.BOTTOM_RIGHT
+          position: toast.POSITION.TOP_RIGHT
         })
         // alert('enregistrement ok')
         this.$router.push({ name: 'login' })

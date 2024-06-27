@@ -37,32 +37,6 @@ const router = createRouter({
       meta: { transitionName: 'fade' }
     },
     { path: '/k-films', name: 'k-films', component: KFilms }
-    // { path: '/:magicRoute/:id', name: 'filmDetailsFactice', component: FilmDetailsFactice, meta: { requiresAuth: false } }
-
-    // {
-    //   path:'/films/:id',
-    //   name: 'filmDetails',
-    //   component: FilmDetails,
-    //   //props: { magicRoute: 'films' },
-    //   props: true,
-    //   //meta: {category : 'films'}
-
-    // },
-    // {
-    //   path:'/series/:id',
-    //   name: 'filmDetails',
-    //   component: FilmDetails,
-    //   //props: { magicRoute: 'series' },
-    //   props:true,
-    //   //meta :{category : 'series'}
-
-    // },
-    // {
-    //   path: '/animations/:id',
-    //   name: 'filmDetails',
-    //   component: FilmDetails,
-
-    // },
   ]
 })
 // Guard pour protéger la route du profil:

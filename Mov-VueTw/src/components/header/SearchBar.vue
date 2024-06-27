@@ -61,7 +61,8 @@
         src="../../assets/Goku-Dragon.webp"
         alt="avatar de profil"
         class="size-16 rounded-full mr-5 scursor-pointer"
-        @click="toggleMenu"
+        @click.stop="toggleMenu"
+        @blur="closeMenu"
       />
       <!-- gestion de l'état de connexion avec petite bille verte pour co et rouge pour déco -->
       <span
@@ -104,6 +105,7 @@
 import { useUserStore } from '@/stores/user'
 import requete from '../../service/api'
 // import { useFacticeUserStore } from '@/stores/facticeUserStore'
+import { toast } from 'vue3-toastify'
 
 export default {
   data() {
@@ -208,11 +210,20 @@ export default {
     toggleMenu() {
       this.showMenu = !this.showMenu
     },
+    closeMenu() {
+      this.showMenu = false
+    },
     logout() {
       // const userStore = useFacticeUserStore()
       this.userStore.logout()
       this.showMenu = false // ferme le menu apres deco.
-      this.$router.push({ name: 'home' })
+      toast("Déconnexion réussie. Redirection vers l'Accueil.", {
+        autoClose: 3000,
+        position: toast.POSITION.TOP_RIGHT
+      })
+      setTimeout(() => {
+        this.$router.push({ name: 'home' })
+      }, 5000) // Délai de 5 secondes avant la redirection
     }
   }
 }

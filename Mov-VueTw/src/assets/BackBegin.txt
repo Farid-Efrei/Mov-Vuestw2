@@ -1,4 +1,0 @@
-Q: Je pense avoir terminé le front pour le moment. Je désire maintenant avoir une vue d'ensemble de ce que je dois faire pour avoir un modele MVC, persister les données dans une base de données existante (code mySQL déjà constitué) et bâtir un backend via NodeJs, Express et Sequelize pour tout faciliter en utilisant les biblio utiles ou recommandés tout en assurant une véritable sécurité maximale à tout niveau de l'application. Peux tu m'aider à me projeter avec simplicité de la maniere la plus rapide (j'ai que 1 jour ou 2 max) pour le faire et je suis débutant donc de maniere claire, transparente et vraiment ludique afin de comprendre toutes les étapes. 
-Tu saurais faire cela ?
-
-

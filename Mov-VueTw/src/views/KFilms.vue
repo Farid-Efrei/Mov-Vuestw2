@@ -71,7 +71,7 @@ export default {
             include_adult: 'false',
             include_video: 'false',
             page: this.currentPage,
-            sort_by: 'primary_release_date.desc',
+            sort_by: 'popularity.desc',
             with_original_language: 'ko'
           }
         })
